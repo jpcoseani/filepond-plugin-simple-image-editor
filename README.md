@@ -34,7 +34,7 @@ preloads sample images so you can immediately click the pencil button and open t
 ## Configuration
 
 The plugin exposes a single option namespace, `simpleImageEditor`, which currently supports label
-customization for internationalization.
+customization for internationalization and optional CSS class overrides.
 
 ### Options
 
@@ -53,6 +53,11 @@ simpleImageEditor: {
       flipVertical: string;
     };
   };
+  classButton?: string;
+  classModal?: string;
+  classControls?: string;
+  classRotateButton?: string;
+  classFlipButton?: string;
 }
 ```
 
@@ -110,6 +115,24 @@ FilePond.setOptions({
       editorButtonIcon: '🖉',
       modalTitle: 'Quick edits',
     },
+  },
+});
+```
+
+### Adding CSS class overrides
+
+Provide custom class names to hook into your own styles. Classes are appended to the default
+structure and applied to the pencil button, modal dialog container, control group, and the rotate
+or flip action buttons.
+
+```js
+FilePond.setOptions({
+  simpleImageEditor: {
+    classButton: 'editor-button',
+    classModal: 'editor-modal',
+    classControls: 'editor-controls',
+    classRotateButton: 'editor-control editor-control-rotate',
+    classFlipButton: 'editor-control editor-control-flip',
   },
 });
 ```
