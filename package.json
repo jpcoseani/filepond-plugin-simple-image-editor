@@ -2,6 +2,7 @@
   "name": "filepond-plugin-simple-image-editor",
   "version": "0.1.0",
   "description": "A lightweight FilePond plugin that adds an inline image editor with rotate and flip controls.",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "http-server .",
