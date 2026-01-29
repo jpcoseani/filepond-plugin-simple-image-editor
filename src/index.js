@@ -1,14 +1,17 @@
+const pencilIconUrl = new URL('../assets/pencil.svg', import.meta.url).toString();
+
 const defaultLabels = {
   editorButtonLabel: 'Edit image',
-  editorButtonIcon: '✏️',
+  editorButtonIcon: `<img src="${pencilIconUrl}" alt="" aria-hidden="true" />`,
   modalTitle: 'Edit image',
+  modalDescription: 'Use the controls to rotate or flip your image.',
   cancelButtonLabel: 'Cancel',
   applyButtonLabel: 'Apply',
   actionLabels: {
-    rotateLeft: '⟲ Rotate Left',
-    rotateRight: '⟳ Rotate Right',
-    flipHorizontal: '⇋ Flip Horizontal',
-    flipVertical: '⇅ Flip Vertical',
+    rotateLeft: 'Rotate left',
+    rotateRight: 'Rotate right',
+    flipHorizontal: 'Flip horizontally',
+    flipVertical: 'Flip vertically',
   },
 };
 
@@ -25,6 +28,8 @@ const resolveLabels = (options = {}) => {
 };
 
 const createModal = ({ labels }) => {
+  const titleId = `simple-editor-title-${crypto.randomUUID()}`;
+  const descriptionId = `simple-editor-description-${crypto.randomUUID()}`;
   const overlay = document.createElement('div');
   overlay.className = 'filepond--simple-editor-modal';
   Object.assign(overlay.style, {
@@ -40,23 +45,66 @@ const createModal = ({ labels }) => {
   const dialog = document.createElement('div');
   dialog.setAttribute('role', 'dialog');
   dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-labelledby', titleId);
+  dialog.setAttribute('aria-describedby', descriptionId);
+  dialog.setAttribute('tabindex', '-1');
   Object.assign(dialog.style, {
     background: '#fff',
     borderRadius: '8px',
-    padding: '16px',
-    width: 'min(90vw, 860px)',
+    padding: '20px',
+    width: 'min(92vw, 880px)',
     maxHeight: '90vh',
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
+    gap: '16px',
+    boxShadow: '0 20px 50px rgba(15, 23, 42, 0.25)',
+  });
+
+  const header = document.createElement('div');
+  Object.assign(header.style, {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
   });
 
   const title = document.createElement('h2');
+  title.id = titleId;
   title.textContent = labels.modalTitle;
   Object.assign(title.style, {
     margin: '0',
-    fontSize: '18px',
+    fontSize: '20px',
     fontWeight: '600',
+  });
+
+  const description = document.createElement('p');
+  description.id = descriptionId;
+  description.textContent = labels.modalDescription;
+  Object.assign(description.style, {
+    margin: '0',
+    fontSize: '14px',
+    color: '#475569',
+  });
+
+  header.appendChild(title);
+  header.appendChild(description);
+
+  const body = document.createElement('div');
+  Object.assign(body.style, {
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
+    gap: '16px',
+    alignItems: 'start',
+  });
+
+  const previewPanel = document.createElement('div');
+  Object.assign(previewPanel.style, {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#f8fafc',
+    borderRadius: '12px',
+    padding: '16px',
+    minHeight: '260px',
   });
 
   const canvas = document.createElement('canvas');
@@ -65,15 +113,30 @@ const createModal = ({ labels }) => {
     maxHeight: '60vh',
     alignSelf: 'center',
     borderRadius: '6px',
-    background: '#f5f5f5',
+    background: '#fff',
+  });
+
+  previewPanel.appendChild(canvas);
+
+  const controlPanel = document.createElement('div');
+  Object.assign(controlPanel.style, {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  });
+
+  const toolbarTitle = document.createElement('h3');
+  toolbarTitle.textContent = 'Adjustments';
+  Object.assign(toolbarTitle.style, {
+    margin: '0',
+    fontSize: '15px',
+    fontWeight: '600',
   });
 
   const toolbar = document.createElement('div');
   Object.assign(toolbar.style, {
-    display: 'flex',
-    flexWrap: 'wrap',
+    display: 'grid',
     gap: '8px',
-    justifyContent: 'center',
   });
 
   const actions = [
@@ -89,16 +152,28 @@ const createModal = ({ labels }) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = action.label;
+    button.setAttribute('aria-label', action.label);
+    if (action.key.startsWith('flip')) {
+      button.setAttribute('aria-pressed', 'false');
+    }
     Object.assign(button.style, {
-      padding: '8px 12px',
-      borderRadius: '6px',
-      border: '1px solid #d0d0d0',
+      padding: '10px 12px',
+      borderRadius: '8px',
+      border: '1px solid #d7dde5',
       background: '#fff',
       cursor: 'pointer',
+      fontSize: '14px',
+      textAlign: 'left',
     });
     toolbar.appendChild(button);
     actionButtons.set(action.key, button);
   });
+
+  controlPanel.appendChild(toolbarTitle);
+  controlPanel.appendChild(toolbar);
+
+  body.appendChild(previewPanel);
+  body.appendChild(controlPanel);
 
   const footer = document.createElement('div');
   Object.assign(footer.style, {
@@ -133,14 +208,14 @@ const createModal = ({ labels }) => {
   footer.appendChild(cancelButton);
   footer.appendChild(applyButton);
 
-  dialog.appendChild(title);
-  dialog.appendChild(canvas);
-  dialog.appendChild(toolbar);
+  dialog.appendChild(header);
+  dialog.appendChild(body);
   dialog.appendChild(footer);
   overlay.appendChild(dialog);
 
   return {
     overlay,
+    dialog,
     canvas,
     actionButtons,
     cancelButton,
@@ -207,7 +282,61 @@ const drawImageToCanvas = ({ img, canvas, rotation, flipX, flipY }) => {
 
 const openEditorModal = async ({ item, labels }) => {
   const modal = createModal({ labels });
+  const previousActiveElement = document.activeElement;
+  const focusableSelector =
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  const focusableElements = () =>
+    Array.from(modal.dialog.querySelectorAll(focusableSelector)).filter(
+      (element) => !element.hasAttribute('disabled')
+    );
+
+  const closeModal = () => {
+    modal.overlay.remove();
+    if (previousActiveElement && typeof previousActiveElement.focus === 'function') {
+      previousActiveElement.focus();
+    }
+    document.removeEventListener('keydown', handleKeydown);
+  };
+
+  const handleKeydown = (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeModal();
+      return;
+    }
+
+    if (event.key !== 'Tab') {
+      return;
+    }
+
+    const focusables = focusableElements();
+    if (focusables.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const isShift = event.shiftKey;
+
+    if (!isShift && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    } else if (isShift && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    }
+  };
+
   document.body.appendChild(modal.overlay);
+  document.addEventListener('keydown', handleKeydown);
+
+  const [initialFocus] = focusableElements();
+  if (initialFocus) {
+    initialFocus.focus();
+  } else {
+    modal.dialog.focus();
+  }
 
   let rotation = 0;
   let flipX = false;
@@ -240,32 +369,34 @@ const openEditorModal = async ({ item, labels }) => {
 
     modal.actionButtons.get('flip-horizontal').addEventListener('click', () => {
       flipX = !flipX;
+      modal.actionButtons.get('flip-horizontal').setAttribute('aria-pressed', String(flipX));
       redraw();
     });
 
     modal.actionButtons.get('flip-vertical').addEventListener('click', () => {
       flipY = !flipY;
+      modal.actionButtons.get('flip-vertical').setAttribute('aria-pressed', String(flipY));
       redraw();
     });
 
     modal.cancelButton.addEventListener('click', () => {
-      modal.overlay.remove();
+      closeModal();
     });
 
     modal.applyButton.addEventListener('click', () => {
       modal.applyButton.disabled = true;
       modal.canvas.toBlob((blob) => {
         if (!blob) {
-          modal.overlay.remove();
+          closeModal();
           return;
         }
         const editedFile = new File([blob], file.name, { type: blob.type });
         updateItemFile(item, editedFile, { rotation, flipX, flipY });
-        modal.overlay.remove();
+        closeModal();
       }, file.type || 'image/png');
     });
   } catch (error) {
-    modal.overlay.remove();
+    closeModal();
     // eslint-disable-next-line no-console
     console.warn('[SimpleImageEditor]', error);
   }
@@ -280,6 +411,7 @@ const addEditorButton = (item, itemElement, labels) => {
   button.type = 'button';
   button.setAttribute('data-simple-image-editor', 'true');
   button.setAttribute('aria-label', labels.editorButtonLabel);
+  button.setAttribute('title', labels.editorButtonLabel);
   button.innerHTML = labels.editorButtonIcon;
   Object.assign(button.style, {
     position: 'absolute',
@@ -296,6 +428,14 @@ const addEditorButton = (item, itemElement, labels) => {
     alignItems: 'center',
     justifyContent: 'center',
   });
+
+  const icon = button.querySelector('img');
+  if (icon) {
+    Object.assign(icon.style, {
+      width: '16px',
+      height: '16px',
+    });
+  }
 
   button.addEventListener('click', (event) => {
     event.preventDefault();
