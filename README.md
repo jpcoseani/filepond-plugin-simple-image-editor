@@ -44,6 +44,7 @@ simpleImageEditor: {
     editorButtonLabel: string;
     editorButtonIcon: string;
     modalTitle: string;
+    modalDescription: string;
     cancelButtonLabel: string;
     applyButtonLabel: string;
     actionLabels: {
@@ -54,10 +55,20 @@ simpleImageEditor: {
     };
   };
   classButton?: string;
+  classButtonIcon?: string;
+  classOverlay?: string;
   classModal?: string;
+  classHeader?: string;
+  classPreview?: string;
+  classCanvas?: string;
   classControls?: string;
+  classToolbarTitle?: string;
+  classActionButton?: string;
   classRotateButton?: string;
   classFlipButton?: string;
+  classFooter?: string;
+  classCancelButton?: string;
+  classApplyButton?: string;
 }
 ```
 
@@ -66,15 +77,16 @@ simpleImageEditor: {
 ```js
 const defaultLabels = {
   editorButtonLabel: 'Edit image',
-  editorButtonIcon: '✏️',
+  editorButtonIcon: '<img src="/path/to/pencil.svg" alt="" aria-hidden="true" />',
   modalTitle: 'Edit image',
+  modalDescription: 'Use the controls to rotate or flip your image.',
   cancelButtonLabel: 'Cancel',
   applyButtonLabel: 'Apply',
   actionLabels: {
-    rotateLeft: '⟲ Rotate Left',
-    rotateRight: '⟳ Rotate Right',
-    flipHorizontal: '⇋ Flip Horizontal',
-    flipVertical: '⇅ Flip Vertical',
+    rotateLeft: 'Rotate left',
+    rotateRight: 'Rotate right',
+    flipHorizontal: 'Flip horizontally',
+    flipVertical: 'Flip vertically',
   },
 };
 ```
@@ -90,6 +102,7 @@ FilePond.setOptions({
     labels: {
       editorButtonLabel: 'Bild bearbeiten',
       modalTitle: 'Bild bearbeiten',
+      modalDescription: 'Mit den Reglern drehen oder spiegeln.',
       cancelButtonLabel: 'Abbrechen',
       applyButtonLabel: 'Übernehmen',
       actionLabels: {
@@ -129,10 +142,24 @@ or flip action buttons.
 FilePond.setOptions({
   simpleImageEditor: {
     classButton: 'editor-button',
+    classButtonIcon: 'editor-button-icon',
+    classOverlay: 'editor-overlay',
     classModal: 'editor-modal',
+    classHeader: 'editor-header',
+    classPreview: 'editor-preview',
+    classCanvas: 'editor-canvas',
     classControls: 'editor-controls',
+    classToolbarTitle: 'editor-toolbar-title',
+    classActionButton: 'editor-control',
     classRotateButton: 'editor-control editor-control-rotate',
     classFlipButton: 'editor-control editor-control-flip',
+    classFooter: 'editor-footer',
+    classCancelButton: 'editor-button-cancel',
+    classApplyButton: 'editor-button-apply',
   },
 });
 ```
+
+## License
+
+MIT.

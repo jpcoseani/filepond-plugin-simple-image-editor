@@ -6,6 +6,16 @@ FilePond.registerPlugin(SimpleImageEditorPlugin);
 const pond = FilePond.create(document.querySelector('#demo-upload'), {
   allowMultiple: true,
   credits: false,
+  simpleImageEditor: {
+    classButton: 'demo-editor-button',
+    classButtonIcon: 'demo-editor-button-icon',
+    classOverlay: 'demo-editor-overlay',
+    classModal: 'demo-editor-modal',
+    classControls: 'demo-editor-controls',
+    classActionButton: 'demo-editor-action',
+    classRotateButton: 'demo-editor-action-rotate',
+    classFlipButton: 'demo-editor-action-flip',
+  },
 });
 
 const createSampleFile = ({ name, background, accent }) =>

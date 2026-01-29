@@ -17,10 +17,20 @@ const defaultLabels = {
 
 const defaultClasses = {
   classButton: '',
+  classButtonIcon: '',
+  classOverlay: '',
   classModal: '',
+  classHeader: '',
+  classPreview: '',
+  classCanvas: '',
   classControls: '',
+  classToolbarTitle: '',
+  classActionButton: '',
   classRotateButton: '',
   classFlipButton: '',
+  classFooter: '',
+  classCancelButton: '',
+  classApplyButton: '',
 };
 
 const resolveLabels = (options = {}) => {
@@ -59,6 +69,7 @@ const createModal = ({ labels, classes }) => {
   const descriptionId = `simple-editor-description-${crypto.randomUUID()}`;
   const overlay = document.createElement('div');
   overlay.className = 'filepond--simple-editor-modal';
+  applyClassNames(overlay, classes.classOverlay);
   Object.assign(overlay.style, {
     position: 'fixed',
     inset: '0',
@@ -89,6 +100,7 @@ const createModal = ({ labels, classes }) => {
   });
 
   const header = document.createElement('div');
+  applyClassNames(header, classes.classHeader);
   Object.assign(header.style, {
     display: 'flex',
     flexDirection: 'column',
@@ -125,6 +137,7 @@ const createModal = ({ labels, classes }) => {
   });
 
   const previewPanel = document.createElement('div');
+  applyClassNames(previewPanel, classes.classPreview);
   Object.assign(previewPanel.style, {
     display: 'flex',
     alignItems: 'center',
@@ -136,6 +149,7 @@ const createModal = ({ labels, classes }) => {
   });
 
   const canvas = document.createElement('canvas');
+  applyClassNames(canvas, classes.classCanvas);
   Object.assign(canvas.style, {
     maxWidth: '100%',
     maxHeight: '60vh',
@@ -155,6 +169,7 @@ const createModal = ({ labels, classes }) => {
 
   const toolbarTitle = document.createElement('h3');
   toolbarTitle.textContent = 'Adjustments';
+  applyClassNames(toolbarTitle, classes.classToolbarTitle);
   Object.assign(toolbarTitle.style, {
     margin: '0',
     fontSize: '15px',
@@ -182,6 +197,7 @@ const createModal = ({ labels, classes }) => {
     button.type = 'button';
     button.textContent = action.label;
     button.setAttribute('aria-label', action.label);
+    applyClassNames(button, classes.classActionButton);
     if (action.key.startsWith('flip')) {
       button.setAttribute('aria-pressed', 'false');
     }
@@ -211,6 +227,7 @@ const createModal = ({ labels, classes }) => {
   body.appendChild(controlPanel);
 
   const footer = document.createElement('div');
+  applyClassNames(footer, classes.classFooter);
   Object.assign(footer.style, {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -220,6 +237,7 @@ const createModal = ({ labels, classes }) => {
   const cancelButton = document.createElement('button');
   cancelButton.type = 'button';
   cancelButton.textContent = labels.cancelButtonLabel;
+  applyClassNames(cancelButton, classes.classCancelButton);
   Object.assign(cancelButton.style, {
     padding: '8px 16px',
     borderRadius: '6px',
@@ -231,6 +249,7 @@ const createModal = ({ labels, classes }) => {
   const applyButton = document.createElement('button');
   applyButton.type = 'button';
   applyButton.textContent = labels.applyButtonLabel;
+  applyClassNames(applyButton, classes.classApplyButton);
   Object.assign(applyButton.style, {
     padding: '8px 16px',
     borderRadius: '6px',
@@ -467,6 +486,7 @@ const addEditorButton = (item, itemElement, labels, classes) => {
 
   const icon = button.querySelector('img');
   if (icon) {
+    applyClassNames(icon, classes.classButtonIcon);
     Object.assign(icon.style, {
       width: '16px',
       height: '16px',
@@ -510,6 +530,12 @@ plugin.options = {
     labels: defaultLabels,
     ...defaultClasses,
   },
+};
+
+export const __testUtils = {
+  resolveLabels,
+  resolveClasses,
+  createModal,
 };
 
 export default plugin;
