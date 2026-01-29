@@ -15,6 +15,14 @@ const defaultLabels = {
   },
 };
 
+const defaultClasses = {
+  classButton: '',
+  classModal: '',
+  classControls: '',
+  classRotateButton: '',
+  classFlipButton: '',
+};
+
 const resolveLabels = (options = {}) => {
   const custom = options.simpleImageEditor?.labels ?? {};
   return {
@@ -27,7 +35,26 @@ const resolveLabels = (options = {}) => {
   };
 };
 
-const createModal = ({ labels }) => {
+const resolveClasses = (options = {}) => {
+  const custom = options.simpleImageEditor ?? {};
+  return {
+    ...defaultClasses,
+    ...custom,
+  };
+};
+
+const applyClassNames = (element, className) => {
+  if (!element || !className) {
+    return;
+  }
+  className
+    .split(' ')
+    .map((name) => name.trim())
+    .filter(Boolean)
+    .forEach((name) => element.classList.add(name));
+};
+
+const createModal = ({ labels, classes }) => {
   const titleId = `simple-editor-title-${crypto.randomUUID()}`;
   const descriptionId = `simple-editor-description-${crypto.randomUUID()}`;
   const overlay = document.createElement('div');
@@ -48,6 +75,7 @@ const createModal = ({ labels }) => {
   dialog.setAttribute('aria-labelledby', titleId);
   dialog.setAttribute('aria-describedby', descriptionId);
   dialog.setAttribute('tabindex', '-1');
+  applyClassNames(dialog, classes.classModal);
   Object.assign(dialog.style, {
     background: '#fff',
     borderRadius: '8px',
@@ -134,6 +162,7 @@ const createModal = ({ labels }) => {
   });
 
   const toolbar = document.createElement('div');
+  applyClassNames(toolbar, classes.classControls);
   Object.assign(toolbar.style, {
     display: 'grid',
     gap: '8px',
@@ -155,6 +184,12 @@ const createModal = ({ labels }) => {
     button.setAttribute('aria-label', action.label);
     if (action.key.startsWith('flip')) {
       button.setAttribute('aria-pressed', 'false');
+    }
+    if (action.key.startsWith('rotate')) {
+      applyClassNames(button, classes.classRotateButton);
+    }
+    if (action.key.startsWith('flip')) {
+      applyClassNames(button, classes.classFlipButton);
     }
     Object.assign(button.style, {
       padding: '10px 12px',
@@ -280,8 +315,8 @@ const drawImageToCanvas = ({ img, canvas, rotation, flipX, flipY }) => {
   context.restore();
 };
 
-const openEditorModal = async ({ item, labels }) => {
-  const modal = createModal({ labels });
+const openEditorModal = async ({ item, labels, classes }) => {
+  const modal = createModal({ labels, classes });
   const previousActiveElement = document.activeElement;
   const focusableSelector =
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -402,7 +437,7 @@ const openEditorModal = async ({ item, labels }) => {
   }
 };
 
-const addEditorButton = (item, itemElement, labels) => {
+const addEditorButton = (item, itemElement, labels, classes) => {
   if (!itemElement || itemElement.querySelector('[data-simple-image-editor]')) {
     return;
   }
@@ -413,6 +448,7 @@ const addEditorButton = (item, itemElement, labels) => {
   button.setAttribute('aria-label', labels.editorButtonLabel);
   button.setAttribute('title', labels.editorButtonLabel);
   button.innerHTML = labels.editorButtonIcon;
+  applyClassNames(button, classes.classButton);
   Object.assign(button.style, {
     position: 'absolute',
     top: '8px',
@@ -440,7 +476,7 @@ const addEditorButton = (item, itemElement, labels) => {
   button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    openEditorModal({ item, labels });
+    openEditorModal({ item, labels, classes });
   });
 
   itemElement.style.position = 'relative';
@@ -452,24 +488,27 @@ const plugin = (FilePond) => {
 
   addFilter('DID_CREATE_ITEM', (item) => {
     const labels = resolveLabels(getOptions());
+    const classes = resolveClasses(getOptions());
     const itemElement = document.querySelector(
       `.filepond--item[data-filepond-item-id="${item.id}"]`
     );
-    addEditorButton(item, itemElement, labels);
+    addEditorButton(item, itemElement, labels, classes);
   });
 
   addFilter('DID_UPDATE_ITEM_METADATA', (item) => {
     const labels = resolveLabels(getOptions());
+    const classes = resolveClasses(getOptions());
     const itemElement = document.querySelector(
       `.filepond--item[data-filepond-item-id="${item.id}"]`
     );
-    addEditorButton(item, itemElement, labels);
+    addEditorButton(item, itemElement, labels, classes);
   });
 };
 
 plugin.options = {
   simpleImageEditor: {
     labels: defaultLabels,
+    ...defaultClasses,
   },
 };
 
