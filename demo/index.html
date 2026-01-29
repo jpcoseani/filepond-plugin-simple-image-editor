@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FilePond Simple Image Editor Demo</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/filepond/dist/filepond.min.css"
+    />
+    <style>
+      :root {
+        font-family: 'Inter', system-ui, sans-serif;
+        color: #0f172a;
+        background: #f8fafc;
+      }
+
+      body {
+        margin: 0;
+        padding: 32px;
+      }
+
+      .demo-shell {
+        max-width: 960px;
+        margin: 0 auto;
+        display: grid;
+        gap: 24px;
+      }
+
+      .demo-header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .demo-header h1 {
+        margin: 0;
+        font-size: 28px;
+      }
+
+      .demo-header p {
+        margin: 0;
+        color: #475569;
+      }
+
+      .demo-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+      }
+
+      .demo-notes {
+        display: grid;
+        gap: 8px;
+        color: #475569;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-shell">
+      <header class="demo-header">
+        <h1>Simple Image Editor Demo</h1>
+        <p>
+          Upload or use the preloaded images below. Click the pencil button on a
+          thumbnail to open the modal editor.
+        </p>
+      </header>
+
+      <section class="demo-card">
+        <input id="demo-upload" type="file" multiple accept="image/*" />
+      </section>
+
+      <section class="demo-notes">
+        <div>✅ Preloaded images show the pencil-button overlay.</div>
+        <div>✅ Click the pencil to open the modal editor and rotate/flip.</div>
+      </section>
+    </div>
+
+    <script type="module" src="./demo.js"></script>
+  </body>
+</html>

@@ -18,6 +18,19 @@ const pond = FilePond.create(document.querySelector('input[type="file"]'));
 The plugin adds a small edit button on each image item. Clicking the button opens a modal editor
 that lets users rotate or flip the image and apply the change.
 
+## Demo
+
+A minimal demo is available in the `demo/` folder. Serve the repository root with a static
+web server and open the demo page. The example below uses `npx` so you don't need to install
+anything globally.
+
+```sh
+npx http-server .
+```
+
+Then open [http://localhost:8000/demo/](http://localhost:8000/demo/) in your browser. The demo
+preloads sample images so you can immediately click the pencil button and open the modal editor.
+
 ## Configuration
 
 The plugin exposes a single option namespace, `simpleImageEditor`, which currently supports label
