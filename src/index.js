@@ -1,4 +1,30 @@
-const createModal = () => {
+const defaultLabels = {
+  editorButtonLabel: 'Edit image',
+  editorButtonIcon: '✏️',
+  modalTitle: 'Edit image',
+  cancelButtonLabel: 'Cancel',
+  applyButtonLabel: 'Apply',
+  actionLabels: {
+    rotateLeft: '⟲ Rotate Left',
+    rotateRight: '⟳ Rotate Right',
+    flipHorizontal: '⇋ Flip Horizontal',
+    flipVertical: '⇅ Flip Vertical',
+  },
+};
+
+const resolveLabels = (options = {}) => {
+  const custom = options.simpleImageEditor?.labels ?? {};
+  return {
+    ...defaultLabels,
+    ...custom,
+    actionLabels: {
+      ...defaultLabels.actionLabels,
+      ...(custom.actionLabels ?? {}),
+    },
+  };
+};
+
+const createModal = ({ labels }) => {
   const overlay = document.createElement('div');
   overlay.className = 'filepond--simple-editor-modal';
   Object.assign(overlay.style, {
@@ -12,6 +38,8 @@ const createModal = () => {
   });
 
   const dialog = document.createElement('div');
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
   Object.assign(dialog.style, {
     background: '#fff',
     borderRadius: '8px',
@@ -21,6 +49,14 @@ const createModal = () => {
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
+  });
+
+  const title = document.createElement('h2');
+  title.textContent = labels.modalTitle;
+  Object.assign(title.style, {
+    margin: '0',
+    fontSize: '18px',
+    fontWeight: '600',
   });
 
   const canvas = document.createElement('canvas');
@@ -41,10 +77,10 @@ const createModal = () => {
   });
 
   const actions = [
-    { key: 'rotate-left', label: '⟲ Rotate Left' },
-    { key: 'rotate-right', label: '⟳ Rotate Right' },
-    { key: 'flip-horizontal', label: '⇋ Flip Horizontal' },
-    { key: 'flip-vertical', label: '⇅ Flip Vertical' },
+    { key: 'rotate-left', label: labels.actionLabels.rotateLeft },
+    { key: 'rotate-right', label: labels.actionLabels.rotateRight },
+    { key: 'flip-horizontal', label: labels.actionLabels.flipHorizontal },
+    { key: 'flip-vertical', label: labels.actionLabels.flipVertical },
   ];
 
   const actionButtons = new Map();
@@ -73,7 +109,7 @@ const createModal = () => {
 
   const cancelButton = document.createElement('button');
   cancelButton.type = 'button';
-  cancelButton.textContent = 'Cancel';
+  cancelButton.textContent = labels.cancelButtonLabel;
   Object.assign(cancelButton.style, {
     padding: '8px 16px',
     borderRadius: '6px',
@@ -84,7 +120,7 @@ const createModal = () => {
 
   const applyButton = document.createElement('button');
   applyButton.type = 'button';
-  applyButton.textContent = 'Apply';
+  applyButton.textContent = labels.applyButtonLabel;
   Object.assign(applyButton.style, {
     padding: '8px 16px',
     borderRadius: '6px',
@@ -97,6 +133,7 @@ const createModal = () => {
   footer.appendChild(cancelButton);
   footer.appendChild(applyButton);
 
+  dialog.appendChild(title);
   dialog.appendChild(canvas);
   dialog.appendChild(toolbar);
   dialog.appendChild(footer);
@@ -168,8 +205,8 @@ const drawImageToCanvas = ({ img, canvas, rotation, flipX, flipY }) => {
   context.restore();
 };
 
-const openEditorModal = async ({ item }) => {
-  const modal = createModal();
+const openEditorModal = async ({ item, labels }) => {
+  const modal = createModal({ labels });
   document.body.appendChild(modal.overlay);
 
   let rotation = 0;
@@ -234,7 +271,7 @@ const openEditorModal = async ({ item }) => {
   }
 };
 
-const addEditorButton = (item, itemElement) => {
+const addEditorButton = (item, itemElement, labels) => {
   if (!itemElement || itemElement.querySelector('[data-simple-image-editor]')) {
     return;
   }
@@ -242,8 +279,8 @@ const addEditorButton = (item, itemElement) => {
   const button = document.createElement('button');
   button.type = 'button';
   button.setAttribute('data-simple-image-editor', 'true');
-  button.setAttribute('aria-label', 'Edit image');
-  button.innerHTML = '✏️';
+  button.setAttribute('aria-label', labels.editorButtonLabel);
+  button.innerHTML = labels.editorButtonIcon;
   Object.assign(button.style, {
     position: 'absolute',
     top: '8px',
@@ -263,7 +300,7 @@ const addEditorButton = (item, itemElement) => {
   button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    openEditorModal({ item });
+    openEditorModal({ item, labels });
   });
 
   itemElement.style.position = 'relative';
@@ -271,24 +308,30 @@ const addEditorButton = (item, itemElement) => {
 };
 
 const plugin = (FilePond) => {
-  const { addFilter } = FilePond;
+  const { addFilter, getOptions } = FilePond;
 
   addFilter('DID_CREATE_ITEM', (item) => {
+    const labels = resolveLabels(getOptions());
     const itemElement = document.querySelector(
       `.filepond--item[data-filepond-item-id="${item.id}"]`
     );
-    addEditorButton(item, itemElement);
+    addEditorButton(item, itemElement, labels);
   });
 
   addFilter('DID_UPDATE_ITEM_METADATA', (item) => {
+    const labels = resolveLabels(getOptions());
     const itemElement = document.querySelector(
       `.filepond--item[data-filepond-item-id="${item.id}"]`
     );
-    addEditorButton(item, itemElement);
+    addEditorButton(item, itemElement, labels);
   });
 };
 
-plugin.options = {};
+plugin.options = {
+  simpleImageEditor: {
+    labels: defaultLabels,
+  },
+};
 
 export default plugin;
 
