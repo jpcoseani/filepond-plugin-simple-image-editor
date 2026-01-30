@@ -61,6 +61,7 @@ simpleImageEditor: {
     actionLabels: {
       rotateLeft: string;
       rotateRight: string;
+      rotate180: string;
       flipHorizontal: string;
       flipVertical: string;
     };
@@ -75,6 +76,9 @@ simpleImageEditor: {
 
 ### Default strings
 
+The action label strings are used for the icon button `aria-label` attributes and the
+tooltip text via the `title` attribute.
+
 ```js
 const defaultLabels = {
   editorButtonLabel: 'Edit image',
@@ -83,10 +87,11 @@ const defaultLabels = {
   cancelButtonLabel: 'Cancel',
   applyButtonLabel: 'Apply',
   actionLabels: {
-    rotateLeft: '⟲ Rotate Left',
-    rotateRight: '⟳ Rotate Right',
-    flipHorizontal: '⇋ Flip Horizontal',
-    flipVertical: '⇅ Flip Vertical',
+    rotateLeft: 'Rotate left',
+    rotateRight: 'Rotate right',
+    rotate180: 'Rotate 180°',
+    flipHorizontal: 'Flip horizontally',
+    flipVertical: 'Flip vertically',
   },
 };
 ```
@@ -107,6 +112,7 @@ FilePond.setOptions({
       actionLabels: {
         rotateLeft: 'Links drehen',
         rotateRight: 'Rechts drehen',
+        rotate180: '180° drehen',
         flipHorizontal: 'Horizontal spiegeln',
         flipVertical: 'Vertikal spiegeln',
       },

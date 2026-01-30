@@ -1,4 +1,28 @@
 const pencilIconUrl = new URL('../assets/pencil.svg', import.meta.url).toString();
+const iconStroke = 'currentColor';
+
+const actionIcons = {
+  'rotate-left': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M3,12.038c0,4.963,4.038,9,9,9s9-4.037,9-9S16.962,3.038,12,3.038c-2.394,0-4.677,.976-6.353,2.647l2.353,2.353H2.091c-.602,0-1.091-.488-1.091-1.091V1.038L3.529,3.567C5.763,1.341,8.807,.038,12,.038c6.617,0,12,5.383,12,12s-5.383,12-12,12C5.383,24.038,0,18.656,0,12.038H3Z" fill="${iconStroke}" />
+  </svg>`,
+  'rotate-right': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M21,12a9.038,9.038,0,1,1-2.647-6.353L16,8h5.909A1.09,1.09,0,0,0,23,6.909V1L20.471,3.529A11.98,11.98,0,1,0,24,12Z" fill="${iconStroke}" />
+  </svg>`,
+  'rotate-180': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M12,2.99a9.03,9.03,0,0,1,6.36,2.65L15.986,8.014h5.83a1.146,1.146,0,0,0,1.146-1.146V1.038L20.471,3.529A11.98,11.98,0,0,0,0,12H2.99A9.02,9.02,0,0,1,12,2.99Z" fill="${iconStroke}" />
+    <path d="M21.01,12A8.994,8.994,0,0,1,5.64,18.36l2.374-2.374H1.993a.956.956,0,0,0-.955.955v6.021l2.491-2.491A11.98,11.98,0,0,0,24,12Z" fill="${iconStroke}" />
+  </svg>`,
+  'flip-horizontal': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <rect width="24" height="24" transform="rotate(180 12 12)" opacity="0"></rect>
+    <path d="M6.09 19h12l-1.3 1.29a1 1 0 0 0 1.42 1.42l3-3a1 1 0 0 0 0-1.42l-3-3a1 1 0 0 0-1.42 0 1 1 0 0 0 0 1.42l1.3 1.29h-12a1.56 1.56 0 0 1-1.59-1.53V13a1 1 0 0 0-2 0v2.47A3.56 3.56 0 0 0 6.09 19z" fill="${iconStroke}" />
+    <path d="M5.79 9.71a1 1 0 1 0 1.42-1.42L5.91 7h12a1.56 1.56 0 0 1 1.59 1.53V11a1 1 0 0 0 2 0V8.53A3.56 3.56 0 0 0 17.91 5h-12l1.3-1.29a1 1 0 0 0 0-1.42 1 1 0 0 0-1.42 0l-3 3a1 1 0 0 0 0 1.42z" fill="${iconStroke}" />
+  </svg>`,
+  'flip-vertical': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <rect width="24" height="24" transform="rotate(-90 12 12)" opacity="0"></rect>
+    <path d="M5 6.09v12l-1.29-1.3a1 1 0 0 0-1.42 1.42l3 3a1 1 0 0 0 1.42 0l3-3a1 1 0 0 0 0-1.42 1 1 0 0 0-1.42 0L7 18.09v-12A1.56 1.56 0 0 1 8.53 4.5H11a1 1 0 0 0 0-2H8.53A3.56 3.56 0 0 0 5 6.09z" fill="${iconStroke}" />
+    <path d="M14.29 5.79a1 1 0 0 0 1.42 1.42L17 5.91v12a1.56 1.56 0 0 1-1.53 1.59H13a1 1 0 0 0 0 2h2.47A3.56 3.56 0 0 0 19 17.91v-12l1.29 1.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42l-3-3a1 1 0 0 0-1.42 0z" fill="${iconStroke}" />
+  </svg>`,
+};
 
 const defaultLabels = {
   editorButtonLabel: 'Edit image',
@@ -12,6 +36,7 @@ const defaultLabels = {
     rotateRight: 'Rotate right',
     flipHorizontal: 'Flip horizontally',
     flipVertical: 'Flip vertically',
+    rotate180: 'Rotate 180°',
   },
 };
 
@@ -118,10 +143,10 @@ const createModal = ({ labels, classes }) => {
 
   const body = document.createElement('div');
   Object.assign(body.style, {
-    display: 'grid',
-    gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
-    gap: '16px',
-    alignItems: 'start',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    alignItems: 'stretch',
   });
 
   const previewPanel = document.createElement('div');
@@ -146,31 +171,20 @@ const createModal = ({ labels, classes }) => {
 
   previewPanel.appendChild(canvas);
 
-  const controlPanel = document.createElement('div');
-  Object.assign(controlPanel.style, {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-  });
-
-  const toolbarTitle = document.createElement('h3');
-  toolbarTitle.textContent = 'Adjustments';
-  Object.assign(toolbarTitle.style, {
-    margin: '0',
-    fontSize: '15px',
-    fontWeight: '600',
-  });
-
   const toolbar = document.createElement('div');
   applyClassNames(toolbar, classes.classControls);
   Object.assign(toolbar.style, {
-    display: 'grid',
-    gap: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: '12px',
   });
 
   const actions = [
     { key: 'rotate-left', label: labels.actionLabels.rotateLeft },
     { key: 'rotate-right', label: labels.actionLabels.rotateRight },
+    { key: 'rotate-180', label: labels.actionLabels.rotate180 },
     { key: 'flip-horizontal', label: labels.actionLabels.flipHorizontal },
     { key: 'flip-vertical', label: labels.actionLabels.flipVertical },
   ];
@@ -180,8 +194,9 @@ const createModal = ({ labels, classes }) => {
   actions.forEach((action) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.textContent = action.label;
+    button.innerHTML = actionIcons[action.key] ?? '';
     button.setAttribute('aria-label', action.label);
+    button.setAttribute('title', action.label);
     if (action.key.startsWith('flip')) {
       button.setAttribute('aria-pressed', 'false');
     }
@@ -192,23 +207,42 @@ const createModal = ({ labels, classes }) => {
       applyClassNames(button, classes.classFlipButton);
     }
     Object.assign(button.style, {
-      padding: '10px 12px',
-      borderRadius: '8px',
+      width: '44px',
+      height: '44px',
+      borderRadius: '12px',
       border: '1px solid #d7dde5',
       background: '#fff',
       cursor: 'pointer',
-      fontSize: '14px',
-      textAlign: 'left',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#0f172a',
+      transition: 'transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
+    });
+    const icon = button.querySelector('svg');
+    if (icon) {
+      Object.assign(icon.style, {
+        width: '22px',
+        height: '22px',
+      });
+    }
+    button.addEventListener('mouseenter', () => {
+      button.style.borderColor = '#a5b4fc';
+      button.style.boxShadow = '0 6px 16px rgba(15, 23, 42, 0.12)';
+      button.style.transform = 'translateY(-1px)';
+    });
+    button.addEventListener('mouseleave', () => {
+      const isPressed = button.getAttribute('aria-pressed') === 'true';
+      button.style.borderColor = isPressed ? '#3b82f6' : '#d7dde5';
+      button.style.boxShadow = isPressed ? '0 0 0 2px rgba(59, 130, 246, 0.2)' : 'none';
+      button.style.transform = 'translateY(0)';
     });
     toolbar.appendChild(button);
     actionButtons.set(action.key, button);
   });
 
-  controlPanel.appendChild(toolbarTitle);
-  controlPanel.appendChild(toolbar);
-
+  body.appendChild(toolbar);
   body.appendChild(previewPanel);
-  body.appendChild(controlPanel);
 
   const footer = document.createElement('div');
   Object.assign(footer.style, {
@@ -403,15 +437,32 @@ const openEditorModal = async ({ item, labels, classes }) => {
       redraw();
     });
 
+    modal.actionButtons.get('rotate-180').addEventListener('click', () => {
+      rotation += 180;
+      redraw();
+    });
+
     modal.actionButtons.get('flip-horizontal').addEventListener('click', () => {
       flipX = !flipX;
       modal.actionButtons.get('flip-horizontal').setAttribute('aria-pressed', String(flipX));
+      modal.actionButtons.get('flip-horizontal').style.borderColor = flipX
+        ? '#3b82f6'
+        : '#d7dde5';
+      modal.actionButtons.get('flip-horizontal').style.boxShadow = flipX
+        ? '0 0 0 2px rgba(59, 130, 246, 0.2)'
+        : 'none';
       redraw();
     });
 
     modal.actionButtons.get('flip-vertical').addEventListener('click', () => {
       flipY = !flipY;
       modal.actionButtons.get('flip-vertical').setAttribute('aria-pressed', String(flipY));
+      modal.actionButtons.get('flip-vertical').style.borderColor = flipY
+        ? '#3b82f6'
+        : '#d7dde5';
+      modal.actionButtons.get('flip-vertical').style.boxShadow = flipY
+        ? '0 0 0 2px rgba(59, 130, 246, 0.2)'
+        : 'none';
       redraw();
     });
 
