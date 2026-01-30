@@ -1,0 +1,9 @@
+__tests__/
+assets/.DS_Store
+demo/
+node_modules/
+.github/
+.vscode/
+coverage/
+jest.config.js
+NPM_PUBLISHING.md
