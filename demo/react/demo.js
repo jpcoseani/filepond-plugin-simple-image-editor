@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as FilePond from 'filepond';
 import { FilePond as ReactFilePond } from 'react-filepond';
+import FilePondImagePreview from 'https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js';
 import SimpleImageEditorPlugin from '../../src/index.js';
 
-FilePond.registerPlugin(SimpleImageEditorPlugin);
+FilePond.registerPlugin(FilePondImagePreview, SimpleImageEditorPlugin);
 
 const createSampleFile = ({ name, background, accent }) =>
   new Promise((resolve) => {
@@ -48,8 +49,9 @@ const createSampleFile = ({ name, background, accent }) =>
 
 const App = () => {
   const [files, setFiles] = useState([]);
+  const [previewFiles, setPreviewFiles] = useState([]);
 
-  const preloadSamples = useCallback(async () => {
+  const preloadSamples = useCallback(async (setState) => {
     const samples = await Promise.all([
       createSampleFile({
         name: 'Sunset',
@@ -63,20 +65,43 @@ const App = () => {
       }),
     ]);
 
-    setFiles(samples);
+    setState(samples);
   }, []);
 
   useEffect(() => {
-    preloadSamples();
+    preloadSamples(setFiles);
+    preloadSamples(setPreviewFiles);
   }, [preloadSamples]);
 
-  return React.createElement(ReactFilePond, {
-    files,
-    onupdatefiles: setFiles,
-    allowMultiple: true,
-    credits: false,
-    acceptedFileTypes: ['image/*'],
-  });
+  return React.createElement(
+    'div',
+    { className: 'demo-grid' },
+    React.createElement(
+      'section',
+      null,
+      React.createElement('h2', { className: 'demo-title' }, 'Sin image preview'),
+      React.createElement(ReactFilePond, {
+        files,
+        onupdatefiles: setFiles,
+        allowMultiple: true,
+        credits: false,
+        acceptedFileTypes: ['image/*'],
+        allowImagePreview: false,
+      })
+    ),
+    React.createElement(
+      'section',
+      null,
+      React.createElement('h2', { className: 'demo-title' }, 'Con image preview'),
+      React.createElement(ReactFilePond, {
+        files: previewFiles,
+        onupdatefiles: setPreviewFiles,
+        allowMultiple: true,
+        credits: false,
+        acceptedFileTypes: ['image/*'],
+      })
+    )
+  );
 };
 
 const root = createRoot(document.getElementById('root'));

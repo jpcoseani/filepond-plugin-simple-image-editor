@@ -8,6 +8,10 @@
       rel="stylesheet"
       href="https://unpkg.com/filepond/dist/filepond.min.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+    />
     <style>
       :root {
         font-family: 'Inter', system-ui, sans-serif;
@@ -50,6 +54,11 @@
         box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
       }
 
+      .demo-card h2 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
       .demo-notes {
         display: grid;
         gap: 8px;
@@ -69,11 +78,17 @@
       </header>
 
       <section class="demo-card">
+        <h2>Sin image preview</h2>
         <input id="demo-upload" type="file" multiple accept="image/*" />
       </section>
 
+      <section class="demo-card">
+        <h2>Con image preview</h2>
+        <input id="demo-upload-preview" type="file" multiple accept="image/*" />
+      </section>
+
       <section class="demo-notes">
-        <div>✅ Preloaded images show the pencil-button overlay.</div>
+        <div>✅ Sin y con el plugin de image preview.</div>
         <div>✅ Click the pencil to open the modal editor and rotate/flip.</div>
         <div>
           ✅ Looking for React? Open the
