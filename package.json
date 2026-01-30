@@ -1,14 +1,25 @@
 {
   "name": "filepond-plugin-simple-image-editor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A lightweight FilePond plugin that adds an inline image editor with rotate and flip controls.",
   "author": "jpcoseani",
-  "keywords": ["filepond", "filepond-plugin", "image", "rotate", "flip"],
+  "keywords": [
+    "filepond",
+    "filepond-plugin",
+    "image",
+    "rotate",
+    "flip"
+  ],
   "license": "MIT",
   "type": "module",
   "main": "src/index.js",
   "exports": "./src/index.js",
-  "files": ["src", "assets", "LICENSE", "README.md"],
+  "files": [
+    "src",
+    "assets",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "dev": "http-server .",
     "build": "echo \"No build step configured\"",
