@@ -1,12 +1,23 @@
 import * as FilePond from 'https://unpkg.com/filepond/dist/filepond.esm.js';
+import FilePondImagePreview from 'https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js';
 import SimpleImageEditorPlugin from '../src/index.js';
 
-FilePond.registerPlugin(SimpleImageEditorPlugin);
+FilePond.registerPlugin(FilePondImagePreview, SimpleImageEditorPlugin);
 
-const pond = FilePond.create(document.querySelector('#demo-upload'), {
+const baseOptions = {
   allowMultiple: true,
   credits: false,
+};
+
+const pond = FilePond.create(document.querySelector('#demo-upload'), {
+  ...baseOptions,
+  allowImagePreview: false,
 });
+
+const previewPond = FilePond.create(
+  document.querySelector('#demo-upload-preview'),
+  baseOptions
+);
 
 const createSampleFile = ({ name, background, accent }) =>
   new Promise((resolve) => {
@@ -48,7 +59,7 @@ const createSampleFile = ({ name, background, accent }) =>
     );
   });
 
-const preloadSamples = async () => {
+const preloadSamples = async (pondInstance) => {
   const samples = await Promise.all([
     createSampleFile({
       name: 'Sunset',
@@ -62,7 +73,8 @@ const preloadSamples = async () => {
     }),
   ]);
 
-  samples.forEach((file) => pond.addFile(file));
+  samples.forEach((file) => pondInstance.addFile(file));
 };
 
-preloadSamples();
+preloadSamples(pond);
+preloadSamples(previewPond);
