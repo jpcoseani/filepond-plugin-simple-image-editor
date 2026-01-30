@@ -20,6 +20,7 @@ const createItem = () => ({
   file: new File(['test'], 'test.png', { type: 'image/png' }),
   setMetadata: jest.fn(),
   setFile: jest.fn(),
+  fire: jest.fn(),
 });
 
 const setupFileReaderMock = () => {
@@ -71,9 +72,6 @@ const setupCanvasMock = () => {
     callback(new Blob(['data'], { type: 'image/png' }));
   };
 
-  HTMLCanvasElement.prototype.toDataURL = jest.fn(
-    () => 'data:image/png;base64,TESTDATA'
-  );
 };
 
 const setupCryptoMock = () => {
@@ -179,9 +177,6 @@ test('updates rotation and flip state before applying', async () => {
     flipX: true,
     flipY: false,
   });
-  expect(item.setMetadata).toHaveBeenCalledWith(
-    'poster',
-    'data:image/png;base64,TESTDATA'
-  );
+  expect(item.fire).toHaveBeenCalledWith('load');
   expect(document.querySelector('.filepond--simple-editor-modal')).toBeNull();
 });

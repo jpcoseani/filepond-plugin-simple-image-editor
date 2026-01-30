@@ -277,46 +277,20 @@ const loadImageFromItem = (item) => {
   });
 };
 
-const updatePreviewElement = (itemElement, previewUrl) => {
-  if (!itemElement || !previewUrl) {
-    return;
-  }
-
-  const previewImage = itemElement.querySelector(
-    '.filepond--image-preview img, .filepond--image-preview-wrapper img'
-  );
-  if (previewImage) {
-    previewImage.src = previewUrl;
-  }
-
-  const previewContainers = itemElement.querySelectorAll(
-    '.filepond--image-preview, .filepond--image-preview-wrapper'
-  );
-  previewContainers.forEach((previewContainer) => {
-    previewContainer.style.backgroundImage = `url("${previewUrl}")`;
-  });
-};
-
-const updateItemFile = (item, file, metadata, previewUrl, itemElement) => {
+const updateItemFile = (item, file, metadata) => {
   if (item?.setMetadata && metadata) {
     item.setMetadata('simpleImageEditor', metadata);
   }
 
-  if (item?.setMetadata && previewUrl) {
-    item.setMetadata('poster', previewUrl);
-  }
-
   if (typeof item?.setFile === 'function') {
     item.setFile(file);
-    updatePreviewElement(itemElement, previewUrl);
-    return;
-  }
-
-  if (typeof item?.setFile === 'undefined' && item?.file) {
+  } else if (typeof item?.setFile === 'undefined' && item?.file) {
     item.file = file;
   }
 
-  updatePreviewElement(itemElement, previewUrl);
+  if (typeof item?.fire === 'function') {
+    item.fire('load');
+  }
 };
 
 const drawImageToCanvas = ({ img, canvas, rotation, flipX, flipY }) => {
@@ -342,7 +316,7 @@ const drawImageToCanvas = ({ img, canvas, rotation, flipX, flipY }) => {
   context.restore();
 };
 
-const openEditorModal = async ({ item, labels, classes, itemElement }) => {
+const openEditorModal = async ({ item, labels, classes }) => {
   const modal = createModal({ labels, classes });
   const previousActiveElement = document.activeElement;
   const focusableSelector =
@@ -452,15 +426,8 @@ const openEditorModal = async ({ item, labels, classes, itemElement }) => {
           closeModal();
           return;
         }
-        const previewUrl = modal.canvas.toDataURL(file.type || 'image/png');
         const editedFile = new File([blob], file.name, { type: blob.type });
-        updateItemFile(
-          item,
-          editedFile,
-          { rotation, flipX, flipY },
-          previewUrl,
-          itemElement
-        );
+        updateItemFile(item, editedFile, { rotation, flipX, flipY });
         closeModal();
       }, file.type || 'image/png');
     });
@@ -510,7 +477,7 @@ const addEditorButton = (item, itemElement, labels, classes) => {
   button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    openEditorModal({ item, labels, classes, itemElement });
+    openEditorModal({ item, labels, classes });
   });
 
   itemElement.style.position = 'relative';
