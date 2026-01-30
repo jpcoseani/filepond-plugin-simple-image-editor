@@ -3,28 +3,28 @@ const iconStroke = 'currentColor';
 
 const actionIcons = {
   'rotate-left': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M4 12a8 8 0 1 0 8-8" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <polyline points="4 4 4 12 12 12" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M5 13a7 7 0 1 0 7-7" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="5 5 5 13 13 13" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
   </svg>`,
   'rotate-right': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M20 12a8 8 0 1 1-8-8" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <polyline points="20 4 20 12 12 12" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M19 13a7 7 0 1 1-7-7" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="19 5 19 13 11 13" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
   </svg>`,
   'rotate-180': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M4 8a8 8 0 0 1 16 0" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M20 16a8 8 0 0 1-16 0" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <polyline points="7 5 4 8 7 11" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <polyline points="17 19 20 16 17 13" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M6 8a6 6 0 0 1 12 0" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M18 16a6 6 0 0 1-12 0" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="8 6 6 8 8 10" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="16 18 18 16 16 14" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
   </svg>`,
   'flip-horizontal': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M12 4v16" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M5 7l4 5-4 5V7z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
-    <path d="M19 7l-4 5 4 5V7z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+    <path d="M12 5v14" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M6.5 7.5l4 4.5-4 4.5v-9z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+    <path d="M17.5 7.5l-4 4.5 4 4.5v-9z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
   </svg>`,
   'flip-vertical': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M4 12h16" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M7 5l5 4 5-4H7z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
-    <path d="M7 19l5-4 5 4H7z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+    <path d="M5 12h14" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M7.5 6.5l4.5 4 4.5-4h-9z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+    <path d="M7.5 17.5l4.5-4 4.5 4h-9z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
   </svg>`,
 };
 
@@ -221,6 +221,7 @@ const createModal = ({ labels, classes }) => {
       alignItems: 'center',
       justifyContent: 'center',
       color: '#0f172a',
+      transition: 'transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
     });
     const icon = button.querySelector('svg');
     if (icon) {
@@ -229,6 +230,17 @@ const createModal = ({ labels, classes }) => {
         height: '22px',
       });
     }
+    button.addEventListener('mouseenter', () => {
+      button.style.borderColor = '#a5b4fc';
+      button.style.boxShadow = '0 6px 16px rgba(15, 23, 42, 0.12)';
+      button.style.transform = 'translateY(-1px)';
+    });
+    button.addEventListener('mouseleave', () => {
+      const isPressed = button.getAttribute('aria-pressed') === 'true';
+      button.style.borderColor = isPressed ? '#3b82f6' : '#d7dde5';
+      button.style.boxShadow = isPressed ? '0 0 0 2px rgba(59, 130, 246, 0.2)' : 'none';
+      button.style.transform = 'translateY(0)';
+    });
     toolbar.appendChild(button);
     actionButtons.set(action.key, button);
   });
