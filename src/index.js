@@ -483,37 +483,59 @@ const addEditorButton = (item, itemElement, labels, classes) => {
   itemElement.appendChild(button);
 };
 
-const plugin = (FilePond) => {
-  const { addFilter, getOptions } = FilePond;
+const plugin = (fpAPI) => {
+  const { addFilter, utils } = fpAPI;
+  const { Type, createRoute } = utils;
 
-  addFilter('DID_CREATE_ITEM', (item) => {
-    const labels = resolveLabels(getOptions());
-    const classes = resolveClasses(getOptions());
-    const itemElement = document.querySelector(
-      `.filepond--item[data-filepond-item-id="${item.id}"]`
+  const isImage = (file) => file && /^image\//.test(file.type);
+
+  addFilter('CREATE_VIEW', (viewAPI) => {
+    const { is, view, query } = viewAPI;
+
+    // solo en la vista de archivo (item)
+    if (!is('file')) return;
+
+    const didLoadItem = ({ root, props }) => {
+      const { id } = props;
+      const item = query('GET_ITEM', id);
+      if (!item || item.archived || !isImage(item.file)) return;
+
+      // ✅ acá leés tu option (porque query existe acá)
+      const simpleOpts =
+        root.query('GET_SIMPLE_IMAGE_EDITOR') ?? {
+          labels: defaultLabels,
+          ...defaultClasses,
+        };
+
+      const labels = resolveLabels({ simpleImageEditor: simpleOpts });
+      const classes = resolveClasses({ simpleImageEditor: simpleOpts });
+
+      // ✅ acá tenés el elemento del item real
+      addEditorButton(item, root.element, labels, classes);
+    };
+
+    view.registerWriter(
+      createRoute(
+        { DID_LOAD_ITEM: didLoadItem },
+        () => {
+          // writer noop (opcional)
+        }
+      )
     );
-    addEditorButton(item, itemElement, labels, classes);
   });
 
-  addFilter('DID_UPDATE_ITEM_METADATA', (item) => {
-    const labels = resolveLabels(getOptions());
-    const classes = resolveClasses(getOptions());
-    const itemElement = document.querySelector(
-      `.filepond--item[data-filepond-item-id="${item.id}"]`
-    );
-    addEditorButton(item, itemElement, labels, classes);
-  });
-};
-
-plugin.options = {
-  simpleImageEditor: {
-    labels: defaultLabels,
-    ...defaultClasses,
-  },
+  return {
+    options: {
+      // esto crea GET_SIMPLE_IMAGE_EDITOR
+      simpleImageEditor: [
+        {
+          labels: defaultLabels,
+          ...defaultClasses,
+        },
+        Type.OBJECT,
+      ],
+    },
+  };
 };
 
 export default plugin;
-
-if (typeof window !== 'undefined' && window.FilePond) {
-  window.FilePond.registerPlugin(plugin);
-}
