@@ -79,7 +79,11 @@ const App = () => {
     React.createElement(
       'section',
       null,
-      React.createElement('h2', { className: 'demo-title' }, 'Sin image preview'),
+      React.createElement(
+        'h2',
+        { className: 'demo-title' },
+        'Without image preview'
+      ),
       React.createElement(ReactFilePond, {
         files,
         onupdatefiles: setFiles,
@@ -92,7 +96,11 @@ const App = () => {
     React.createElement(
       'section',
       null,
-      React.createElement('h2', { className: 'demo-title' }, 'Con image preview'),
+      React.createElement(
+        'h2',
+        { className: 'demo-title' },
+        'With image preview'
+      ),
       React.createElement(ReactFilePond, {
         files: previewFiles,
         onupdatefiles: setPreviewFiles,
