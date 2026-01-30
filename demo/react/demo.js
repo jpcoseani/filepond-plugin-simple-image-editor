@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'https://esm.sh/react@18';
-import { createRoot } from 'https://esm.sh/react-dom@18/client';
-import * as FilePond from 'https://unpkg.com/filepond/dist/filepond.esm.js';
-import { FilePond as ReactFilePond } from 'https://esm.sh/react-filepond@7?external=react,react-dom,filepond';
+import React, { useCallback, useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as FilePond from 'filepond';
+import { FilePond as ReactFilePond } from 'react-filepond';
 import SimpleImageEditorPlugin from '../../src/index.js';
 
 FilePond.registerPlugin(SimpleImageEditorPlugin);
