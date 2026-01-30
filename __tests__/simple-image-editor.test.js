@@ -70,6 +70,10 @@ const setupCanvasMock = () => {
   HTMLCanvasElement.prototype.toBlob = function toBlob(callback) {
     callback(new Blob(['data'], { type: 'image/png' }));
   };
+
+  HTMLCanvasElement.prototype.toDataURL = jest.fn(
+    () => 'data:image/png;base64,TESTDATA'
+  );
 };
 
 const setupCryptoMock = () => {
@@ -175,5 +179,9 @@ test('updates rotation and flip state before applying', async () => {
     flipX: true,
     flipY: false,
   });
+  expect(item.setMetadata).toHaveBeenCalledWith(
+    'poster',
+    'data:image/png;base64,TESTDATA'
+  );
   expect(document.querySelector('.filepond--simple-editor-modal')).toBeNull();
 });
