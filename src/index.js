@@ -3,18 +3,14 @@ const iconStroke = 'currentColor';
 
 const actionIcons = {
   'rotate-left': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M5 13a7 7 0 1 0 7-7" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <polyline points="5 5 5 13 13 13" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M3,12.038c0,4.963,4.038,9,9,9s9-4.037,9-9S16.962,3.038,12,3.038c-2.394,0-4.677,.976-6.353,2.647l2.353,2.353H2.091c-.602,0-1.091-.488-1.091-1.091V1.038L3.529,3.567C5.763,1.341,8.807,.038,12,.038c6.617,0,12,5.383,12,12s-5.383,12-12,12C5.383,24.038,0,18.656,0,12.038H3Z" fill="${iconStroke}" />
   </svg>`,
   'rotate-right': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M19 13a7 7 0 1 1-7-7" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <polyline points="19 5 19 13 11 13" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M21,12a9.038,9.038,0,1,1-2.647-6.353L16,8h5.909A1.09,1.09,0,0,0,23,6.909V1L20.471,3.529A11.98,11.98,0,1,0,24,12Z" fill="${iconStroke}" />
   </svg>`,
   'rotate-180': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M6 8a6 6 0 0 1 12 0" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M18 16a6 6 0 0 1-12 0" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <polyline points="8 6 6 8 8 10" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <polyline points="16 18 18 16 16 14" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M12,2.99a9.03,9.03,0,0,1,6.36,2.65L15.986,8.014h5.83a1.146,1.146,0,0,0,1.146-1.146V1.038L20.471,3.529A11.98,11.98,0,0,0,0,12H2.99A9.02,9.02,0,0,1,12,2.99Z" fill="${iconStroke}" />
+    <path d="M21.01,12A8.994,8.994,0,0,1,5.64,18.36l2.374-2.374H1.993a.956.956,0,0,0-.955.955v6.021l2.491-2.491A11.98,11.98,0,0,0,24,12Z" fill="${iconStroke}" />
   </svg>`,
   'flip-horizontal': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path d="M12 5v14" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
