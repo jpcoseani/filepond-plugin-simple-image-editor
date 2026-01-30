@@ -70,16 +70,14 @@ const App = () => {
     preloadSamples();
   }, [preloadSamples]);
 
-  return (
-    <ReactFilePond
-      files={files}
-      onupdatefiles={setFiles}
-      allowMultiple={true}
-      credits={false}
-      acceptedFileTypes={['image/*']}
-    />
-  );
+  return React.createElement(ReactFilePond, {
+    files,
+    onupdatefiles: setFiles,
+    allowMultiple: true,
+    credits: false,
+    acceptedFileTypes: ['image/*'],
+  });
 };
 
 const root = createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(React.createElement(App));
