@@ -284,11 +284,12 @@ const updateItemFile = (item, file, metadata) => {
 
   if (typeof item?.setFile === 'function') {
     item.setFile(file);
-    return;
+  } else if (typeof item?.setFile === 'undefined' && item?.file) {
+    item.file = file;
   }
 
-  if (typeof item?.setFile === 'undefined' && item?.file) {
-    item.file = file;
+  if (typeof item?.fire === 'function') {
+    item.fire('load');
   }
 };
 
