@@ -1,4 +1,32 @@
 const pencilIconUrl = new URL('../assets/pencil.svg', import.meta.url).toString();
+const iconStroke = 'currentColor';
+
+const actionIcons = {
+  'rotate-left': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M4 12a8 8 0 1 0 8-8" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="4 4 4 12 12 12" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>`,
+  'rotate-right': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M20 12a8 8 0 1 1-8-8" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="20 4 20 12 12 12" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>`,
+  'rotate-180': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M4 8a8 8 0 0 1 16 0" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M20 16a8 8 0 0 1-16 0" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="7 5 4 8 7 11" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <polyline points="17 19 20 16 17 13" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>`,
+  'flip-horizontal': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M12 4v16" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M5 7l4 5-4 5V7z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+    <path d="M19 7l-4 5 4 5V7z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+  </svg>`,
+  'flip-vertical': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M4 12h16" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M7 5l5 4 5-4H7z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+    <path d="M7 19l5-4 5 4H7z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+  </svg>`,
+};
 
 const defaultLabels = {
   editorButtonLabel: 'Edit image',
@@ -12,6 +40,7 @@ const defaultLabels = {
     rotateRight: 'Rotate right',
     flipHorizontal: 'Flip horizontally',
     flipVertical: 'Flip vertically',
+    rotate180: 'Rotate 180°',
   },
 };
 
@@ -118,10 +147,10 @@ const createModal = ({ labels, classes }) => {
 
   const body = document.createElement('div');
   Object.assign(body.style, {
-    display: 'grid',
-    gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
-    gap: '16px',
-    alignItems: 'start',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    alignItems: 'stretch',
   });
 
   const previewPanel = document.createElement('div');
@@ -146,31 +175,20 @@ const createModal = ({ labels, classes }) => {
 
   previewPanel.appendChild(canvas);
 
-  const controlPanel = document.createElement('div');
-  Object.assign(controlPanel.style, {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-  });
-
-  const toolbarTitle = document.createElement('h3');
-  toolbarTitle.textContent = 'Adjustments';
-  Object.assign(toolbarTitle.style, {
-    margin: '0',
-    fontSize: '15px',
-    fontWeight: '600',
-  });
-
   const toolbar = document.createElement('div');
   applyClassNames(toolbar, classes.classControls);
   Object.assign(toolbar.style, {
-    display: 'grid',
-    gap: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: '12px',
   });
 
   const actions = [
     { key: 'rotate-left', label: labels.actionLabels.rotateLeft },
     { key: 'rotate-right', label: labels.actionLabels.rotateRight },
+    { key: 'rotate-180', label: labels.actionLabels.rotate180 },
     { key: 'flip-horizontal', label: labels.actionLabels.flipHorizontal },
     { key: 'flip-vertical', label: labels.actionLabels.flipVertical },
   ];
@@ -180,8 +198,9 @@ const createModal = ({ labels, classes }) => {
   actions.forEach((action) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.textContent = action.label;
+    button.innerHTML = actionIcons[action.key] ?? '';
     button.setAttribute('aria-label', action.label);
+    button.setAttribute('title', action.label);
     if (action.key.startsWith('flip')) {
       button.setAttribute('aria-pressed', 'false');
     }
@@ -192,23 +211,30 @@ const createModal = ({ labels, classes }) => {
       applyClassNames(button, classes.classFlipButton);
     }
     Object.assign(button.style, {
-      padding: '10px 12px',
-      borderRadius: '8px',
+      width: '44px',
+      height: '44px',
+      borderRadius: '12px',
       border: '1px solid #d7dde5',
       background: '#fff',
       cursor: 'pointer',
-      fontSize: '14px',
-      textAlign: 'left',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#0f172a',
     });
+    const icon = button.querySelector('svg');
+    if (icon) {
+      Object.assign(icon.style, {
+        width: '22px',
+        height: '22px',
+      });
+    }
     toolbar.appendChild(button);
     actionButtons.set(action.key, button);
   });
 
-  controlPanel.appendChild(toolbarTitle);
-  controlPanel.appendChild(toolbar);
-
+  body.appendChild(toolbar);
   body.appendChild(previewPanel);
-  body.appendChild(controlPanel);
 
   const footer = document.createElement('div');
   Object.assign(footer.style, {
@@ -403,15 +429,32 @@ const openEditorModal = async ({ item, labels, classes }) => {
       redraw();
     });
 
+    modal.actionButtons.get('rotate-180').addEventListener('click', () => {
+      rotation += 180;
+      redraw();
+    });
+
     modal.actionButtons.get('flip-horizontal').addEventListener('click', () => {
       flipX = !flipX;
       modal.actionButtons.get('flip-horizontal').setAttribute('aria-pressed', String(flipX));
+      modal.actionButtons.get('flip-horizontal').style.borderColor = flipX
+        ? '#3b82f6'
+        : '#d7dde5';
+      modal.actionButtons.get('flip-horizontal').style.boxShadow = flipX
+        ? '0 0 0 2px rgba(59, 130, 246, 0.2)'
+        : 'none';
       redraw();
     });
 
     modal.actionButtons.get('flip-vertical').addEventListener('click', () => {
       flipY = !flipY;
       modal.actionButtons.get('flip-vertical').setAttribute('aria-pressed', String(flipY));
+      modal.actionButtons.get('flip-vertical').style.borderColor = flipY
+        ? '#3b82f6'
+        : '#d7dde5';
+      modal.actionButtons.get('flip-vertical').style.boxShadow = flipY
+        ? '0 0 0 2px rgba(59, 130, 246, 0.2)'
+        : 'none';
       redraw();
     });
 
