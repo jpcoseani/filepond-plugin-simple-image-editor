@@ -31,6 +31,18 @@ npx http-server .
 Then open [http://localhost:8000/demo/](http://localhost:8000/demo/) in your browser. The demo
 preloads sample images so you can immediately click the pencil button and open the modal editor.
 
+### React demo
+
+If you're integrating FilePond with React, the repository also ships a dedicated React demo
+powered by `react-filepond`.
+
+```sh
+npx http-server .
+```
+
+Then open [http://localhost:8000/demo/react/](http://localhost:8000/demo/react/) to see the
+React integration with preloaded images and the Simple Image Editor plugin.
+
 ## Configuration
 
 The plugin exposes a single option namespace, `simpleImageEditor`, which currently supports label
@@ -133,6 +145,96 @@ FilePond.setOptions({
     classControls: 'editor-controls',
     classRotateButton: 'editor-control editor-control-rotate',
     classFlipButton: 'editor-control editor-control-flip',
+  },
+});
+```
+
+## Usage scenarios
+
+Use the plugin in the way that matches your setup. The snippets below mirror the structure of the
+official FilePond plugin documentation and highlight common integration patterns.
+
+### Vanilla FilePond (plain JS)
+
+```js
+import * as FilePond from 'filepond';
+import SimpleImageEditorPlugin from 'filepond-plugin-simple-image-editor';
+
+FilePond.registerPlugin(SimpleImageEditorPlugin);
+
+const pond = FilePond.create(document.querySelector('input[type=\"file\"]'), {
+  allowMultiple: true,
+  credits: false,
+});
+```
+
+### React with `react-filepond`
+
+```jsx
+import React, { useState } from 'react';
+import * as FilePond from 'filepond';
+import { FilePond as ReactFilePond } from 'react-filepond';
+import SimpleImageEditorPlugin from 'filepond-plugin-simple-image-editor';
+
+FilePond.registerPlugin(SimpleImageEditorPlugin);
+
+export default function ImageUploader() {
+  const [files, setFiles] = useState([]);
+
+  return (
+    <ReactFilePond
+      files={files}
+      onupdatefiles={setFiles}
+      allowMultiple={true}
+      credits={false}
+      acceptedFileTypes={['image/*']}
+    />
+  );
+}
+```
+
+### Preloading existing files
+
+Use `files` (or `pond.addFile`) to preload images so the editor button is available immediately.
+
+```js
+const pond = FilePond.create(input, { credits: false });
+
+pond.addFile('/images/already-uploaded.png');
+```
+
+### Uploading to a server
+
+Pair the editor with the FilePond server API. The plugin edits the image before the upload so your
+server receives the transformed image.
+
+```js
+FilePond.create(input, {
+  credits: false,
+  server: {
+    process: '/api/uploads',
+    revert: '/api/uploads/revert',
+  },
+});
+```
+
+### Localization + custom labels
+
+```js
+FilePond.setOptions({
+  simpleImageEditor: {
+    labels: {
+      editorButtonLabel: 'Editar imagen',
+      modalTitle: 'Editar imagen',
+      cancelButtonLabel: 'Cancelar',
+      applyButtonLabel: 'Aplicar',
+      actionLabels: {
+        rotateLeft: 'Girar a la izquierda',
+        rotateRight: 'Girar a la derecha',
+        flipHorizontal: 'Voltear horizontal',
+        flipVertical: 'Voltear vertical',
+      },
+    },
   },
 });
 ```

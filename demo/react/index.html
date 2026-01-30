@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FilePond Simple Image Editor Demo</title>
+    <title>FilePond Simple Image Editor React Demo</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/filepond/dist/filepond.min.css"
@@ -56,32 +56,44 @@
         color: #475569;
         font-size: 14px;
       }
+
+      .demo-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #e2e8f0;
+        color: #0f172a;
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        width: fit-content;
+      }
     </style>
   </head>
   <body>
     <div class="demo-shell">
       <header class="demo-header">
-        <h1>Simple Image Editor Demo</h1>
+        <span class="demo-tag">React demo</span>
+        <h1>Simple Image Editor + React</h1>
         <p>
-          Upload or use the preloaded images below. Click the pencil button on a
-          thumbnail to open the modal editor.
+          This demo uses <code>react-filepond</code> with the Simple Image Editor
+          plugin. Click the pencil button on a thumbnail to open the modal
+          editor.
         </p>
       </header>
 
       <section class="demo-card">
-        <input id="demo-upload" type="file" multiple accept="image/*" />
+        <div id="root"></div>
       </section>
 
       <section class="demo-notes">
-        <div>✅ Preloaded images show the pencil-button overlay.</div>
-        <div>✅ Click the pencil to open the modal editor and rotate/flip.</div>
-        <div>
-          ✅ Looking for React? Open the
-          <a href="./react/">React demo</a>.
-        </div>
+        <div>✅ React + FilePond integration.</div>
+        <div>✅ Preloaded samples show the editor button.</div>
+        <div>✅ Rotate or flip, then apply to update the preview.</div>
       </section>
     </div>
 
-    <script type="module" src="./demo.js"></script>
+    <script type="module" src="./demo.jsx"></script>
   </body>
 </html>
