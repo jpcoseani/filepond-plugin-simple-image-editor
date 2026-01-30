@@ -13,14 +13,14 @@ const actionIcons = {
     <path d="M21.01,12A8.994,8.994,0,0,1,5.64,18.36l2.374-2.374H1.993a.956.956,0,0,0-.955.955v6.021l2.491-2.491A11.98,11.98,0,0,0,24,12Z" fill="${iconStroke}" />
   </svg>`,
   'flip-horizontal': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M12 5v14" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M6.5 7.5l4 4.5-4 4.5v-9z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
-    <path d="M17.5 7.5l-4 4.5 4 4.5v-9z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+    <path d="M19 12L17 12M13 12L11 12M7 12L5 12" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M17 20L12 15L7 20L17 20Z" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M17 4L12 9L7 4L17 4Z" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
   </svg>`,
   'flip-vertical': `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M5 12h14" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M7.5 6.5l4.5 4 4.5-4h-9z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
-    <path d="M7.5 17.5l4.5-4 4.5 4h-9z" fill="none" stroke="${iconStroke}" stroke-width="2" stroke-linejoin="round" />
+    <path d="M12 5V7M12 11V13M12 17V19" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M20 7L15 12L20 17V7Z" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M4 7L9 12L4 17V7Z" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
   </svg>`,
 };
 
