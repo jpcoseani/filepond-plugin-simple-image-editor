@@ -11,6 +11,10 @@
     "flip"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jpcoseani/filepond-plugin-simple-image-editor"
+  },
   "type": "module",
   "main": "src/index.js",
   "exports": "./src/index.js",
