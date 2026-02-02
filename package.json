@@ -13,7 +13,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jpcoseani/filepond-plugin-simple-image-editor"
+    "url": "git+https://github.com/jpcoseani/filepond-plugin-simple-image-editor.git"
   },
   "type": "module",
   "main": "src/index.js",
