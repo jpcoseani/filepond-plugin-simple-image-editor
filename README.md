@@ -2,6 +2,10 @@
 
 A lightweight FilePond plugin that adds an inline image editor with rotate and flip controls.
 
+## Demo online
+
+https://jpcoseani.github.io/filepond-plugin-simple-image-editor/demo/
+
 ## Usage
 
 Register the plugin and enable it on your FilePond instance:
