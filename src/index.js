@@ -339,6 +339,12 @@ const FileStatus = {
   LOAD_ERROR: 8,
 };
 
+const FileOrigin = {
+  INPUT: 1,
+  LIMBO: 2,
+  LOCAL: 3,
+};
+
 const shouldHideEditorButton = (item) => {
   if (!item || typeof item.status !== 'number') {
     return false;
@@ -349,6 +355,36 @@ const shouldHideEditorButton = (item) => {
     FileStatus.PROCESSING_QUEUED,
     FileStatus.LOADING,
   ].includes(item.status);
+};
+
+const hasImagePreview = (itemElement) =>
+  Boolean(
+    itemElement?.querySelector('.filepond--image-preview, .filepond--image-preview-wrapper')
+  );
+
+const markItemAsLocal = (item) => {
+  if (!item || typeof item.origin === 'undefined') {
+    return;
+  }
+
+  if (item.origin !== FileOrigin.LOCAL) {
+    item.origin = FileOrigin.LOCAL;
+  }
+};
+
+const updateRevertButtonVisibility = (itemElement, item) => {
+  if (!itemElement) {
+    return;
+  }
+
+  const revertButton = itemElement.querySelector('.filepond--action-revert-item-processing');
+  if (!revertButton) {
+    return;
+  }
+
+  const shouldHide =
+    item?.status === FileStatus.PROCESSING_COMPLETE && !hasImagePreview(itemElement);
+  revertButton.style.display = shouldHide ? 'none' : '';
 };
 
 const updateEditorButtonState = (itemElement, item) => {
@@ -606,11 +642,16 @@ const plugin = (fpAPI) => {
       // ✅ acá tenés el elemento del item real
       addEditorButton(item, root.element, labels, classes);
       updateEditorButtonState(root.element, item);
+      updateRevertButtonVisibility(root.element, item);
     };
 
     const updateItemButton = ({ root, id }) => {
       const item = query('GET_ITEM', id);
       if (!item) return;
+      if (item.status === FileStatus.PROCESSING_COMPLETE && !hasImagePreview(root.element)) {
+        markItemAsLocal(item);
+      }
+      updateRevertButtonVisibility(root.element, item);
       updateEditorButtonState(root.element, item);
     };
 
