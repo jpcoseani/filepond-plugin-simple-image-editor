@@ -357,11 +357,6 @@ const shouldHideEditorButton = (item) => {
   ].includes(item.status);
 };
 
-const hasImagePreview = (itemElement) =>
-  Boolean(
-    itemElement?.querySelector('.filepond--image-preview, .filepond--image-preview-wrapper')
-  );
-
 const markItemAsLocal = (item) => {
   if (!item || typeof item.origin === 'undefined') {
     return;
@@ -382,8 +377,7 @@ const updateRevertButtonVisibility = (itemElement, item) => {
     return;
   }
 
-  const shouldHide =
-    item?.status === FileStatus.PROCESSING_COMPLETE && !hasImagePreview(itemElement);
+  const shouldHide = item?.origin === FileOrigin.LOCAL;
   revertButton.style.display = shouldHide ? 'none' : '';
 };
 
@@ -648,7 +642,7 @@ const plugin = (fpAPI) => {
     const updateItemButton = ({ root, id }) => {
       const item = query('GET_ITEM', id);
       if (!item) return;
-      if (item.status === FileStatus.PROCESSING_COMPLETE && !hasImagePreview(root.element)) {
+      if (item.status === FileStatus.PROCESSING_COMPLETE) {
         markItemAsLocal(item);
       }
       updateRevertButtonVisibility(root.element, item);
