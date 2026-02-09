@@ -327,6 +327,43 @@ const updateItemFile = (item, file, metadata) => {
   }
 };
 
+const FileStatus = {
+  INIT: 1,
+  IDLE: 2,
+  PROCESSING: 3,
+  PROCESSING_COMPLETE: 5,
+  PROCESSING_ERROR: 6,
+  PROCESSING_QUEUED: 9,
+  PROCESSING_REVERT_ERROR: 10,
+  LOADING: 7,
+  LOAD_ERROR: 8,
+};
+
+const shouldHideEditorButton = (item) => {
+  if (!item || typeof item.status !== 'number') {
+    return false;
+  }
+
+  return [
+    FileStatus.PROCESSING,
+    FileStatus.PROCESSING_QUEUED,
+    FileStatus.LOADING,
+  ].includes(item.status);
+};
+
+const updateEditorButtonVisibility = (itemElement, item) => {
+  if (!itemElement) {
+    return;
+  }
+
+  const button = itemElement.querySelector('[data-simple-image-editor]');
+  if (!button) {
+    return;
+  }
+
+  button.style.display = shouldHideEditorButton(item) ? 'none' : 'flex';
+};
+
 const drawImageToCanvas = ({ img, canvas, rotation, flipX, flipY }) => {
   const context = canvas.getContext('2d');
   if (!context) {
@@ -533,6 +570,7 @@ const addEditorButton = (item, itemElement, labels, classes) => {
 
   itemElement.style.position = 'relative';
   itemElement.appendChild(button);
+  updateEditorButtonVisibility(itemElement, item);
 };
 
 const plugin = (fpAPI) => {
@@ -564,11 +602,27 @@ const plugin = (fpAPI) => {
 
       // ✅ acá tenés el elemento del item real
       addEditorButton(item, root.element, labels, classes);
+      updateEditorButtonVisibility(root.element, item);
+    };
+
+    const updateItemButton = ({ root, id }) => {
+      const item = query('GET_ITEM', id);
+      if (!item) return;
+      updateEditorButtonVisibility(root.element, item);
     };
 
     view.registerWriter(
       createRoute(
-        { DID_LOAD_ITEM: didLoadItem },
+        {
+          DID_LOAD_ITEM: didLoadItem,
+          DID_START_ITEM_PROCESSING: updateItemButton,
+          DID_REQUEST_ITEM_PROCESSING: updateItemButton,
+          DID_COMPLETE_ITEM_PROCESSING: updateItemButton,
+          DID_ABORT_ITEM_PROCESSING: updateItemButton,
+          DID_REVERT_ITEM_PROCESSING: updateItemButton,
+          DID_THROW_ITEM_PROCESSING_ERROR: updateItemButton,
+          DID_THROW_ITEM_PROCESSING_REVERT_ERROR: updateItemButton,
+        },
         () => {
           // writer noop (opcional)
         }
