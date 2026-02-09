@@ -351,7 +351,7 @@ const shouldHideEditorButton = (item) => {
   ].includes(item.status);
 };
 
-const updateEditorButtonVisibility = (itemElement, item) => {
+const updateEditorButtonState = (itemElement, item) => {
   if (!itemElement) {
     return;
   }
@@ -361,7 +361,10 @@ const updateEditorButtonVisibility = (itemElement, item) => {
     return;
   }
 
+  const isProcessingComplete = item?.status === FileStatus.PROCESSING_COMPLETE;
   button.style.display = shouldHideEditorButton(item) ? 'none' : 'flex';
+  button.style.top = isProcessingComplete ? 'auto' : '8px';
+  button.style.bottom = isProcessingComplete ? '8px' : 'auto';
 };
 
 const drawImageToCanvas = ({ img, canvas, rotation, flipX, flipY }) => {
@@ -570,7 +573,7 @@ const addEditorButton = (item, itemElement, labels, classes) => {
 
   itemElement.style.position = 'relative';
   itemElement.appendChild(button);
-  updateEditorButtonVisibility(itemElement, item);
+  updateEditorButtonState(itemElement, item);
 };
 
 const plugin = (fpAPI) => {
@@ -602,13 +605,13 @@ const plugin = (fpAPI) => {
 
       // ✅ acá tenés el elemento del item real
       addEditorButton(item, root.element, labels, classes);
-      updateEditorButtonVisibility(root.element, item);
+      updateEditorButtonState(root.element, item);
     };
 
     const updateItemButton = ({ root, id }) => {
       const item = query('GET_ITEM', id);
       if (!item) return;
-      updateEditorButtonVisibility(root.element, item);
+      updateEditorButtonState(root.element, item);
     };
 
     view.registerWriter(
