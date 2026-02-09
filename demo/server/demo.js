@@ -8,9 +8,9 @@ const baseOptions = {
   allowMultiple: true,
   credits: false,
   server: {
-    process: '/process',
-    revert: '/revert',
-    load: '/load/',
+    process: 'http://localhost:3000/process',
+    revert: 'http://localhost:3000/revert',
+    load: 'http://localhost:3000/load/',
   },
 };
 

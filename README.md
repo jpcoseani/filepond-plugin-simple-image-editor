@@ -39,14 +39,15 @@ preloads sample images so you can immediately click the pencil button and open t
 
 If you want to see how FilePond interacts with a backend, run the included demo server. It
 provides the `process`, `revert`, and `load` endpoints and stores uploaded files in
-`demo/server/uploads`.
+`demo/server/uploads`. Keep the static demo running with `http-server` and start the API in a
+separate terminal.
 
 ```sh
 npm run demo:server
 ```
 
-Then open [http://localhost:3000/demo/server/](http://localhost:3000/demo/server/) in your browser
-and inspect network requests to trace the upload lifecycle.
+Then open [http://localhost:8000/demo/server/](http://localhost:8000/demo/server/) in your browser
+and inspect network requests to trace the upload lifecycle (the API runs on port 3000).
 
 ### React demo
 

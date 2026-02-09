@@ -6,7 +6,6 @@ import crypto from 'node:crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const repoRoot = path.resolve(__dirname, '..');
 const uploadsDir = path.join(__dirname, 'uploads');
 
 const PORT = process.env.PORT || 3000;
@@ -14,17 +13,6 @@ const uploads = new Map();
 
 const ensureUploadsDir = async () => {
   await fs.mkdir(uploadsDir, { recursive: true });
-};
-
-const mimeTypes = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.svg': 'image/svg+xml',
 };
 
 const send = (res, status, body, headers = {}) => {
@@ -42,43 +30,8 @@ const setCors = (res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 };
 
-const resolveStaticPath = (pathname) => {
-  if (pathname === '/' || pathname === '/demo/server/') {
-    return path.join(repoRoot, 'demo', 'server', 'index.html');
-  }
-
-  if (pathname.startsWith('/demo/')) {
-    return path.join(repoRoot, pathname);
-  }
-
-  if (pathname.startsWith('/src/')) {
-    return path.join(repoRoot, pathname);
-  }
-
-  return null;
-};
-
-const handleStatic = async (req, res, pathname) => {
-  const filePath = resolveStaticPath(pathname);
-  if (!filePath) {
-    sendText(res, 404, 'Not Found');
-    return;
-  }
-
-  try {
-    const stat = await fs.stat(filePath);
-    if (!stat.isFile()) {
-      sendText(res, 404, 'Not Found');
-      return;
-    }
-
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = mimeTypes[ext] || 'application/octet-stream';
-    const data = await fs.readFile(filePath);
-    send(res, 200, data, { 'Content-Type': contentType });
-  } catch (error) {
-    sendText(res, 404, 'Not Found');
-  }
+const notFound = (res) => {
+  sendText(res, 404, 'Not Found');
 };
 
 const collectBuffer = (req) =>
@@ -208,7 +161,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  await handleStatic(req, res, pathname);
+  notFound(res);
 });
 
 server.listen(PORT, () => {
