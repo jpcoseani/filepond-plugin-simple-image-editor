@@ -345,6 +345,24 @@ const FileOrigin = {
   LOCAL: 3,
 };
 
+const LOCAL_ITEM_CLASS = 'simple-image-editor--local';
+const LOCAL_STYLE_ID = 'simple-image-editor-local-style';
+
+const ensureLocalStyle = () => {
+  if (document.getElementById(LOCAL_STYLE_ID)) {
+    return;
+  }
+
+  const style = document.createElement('style');
+  style.id = LOCAL_STYLE_ID;
+  style.textContent = `
+    .${LOCAL_ITEM_CLASS} .filepond--action-revert-item-processing {
+      display: none;
+    }
+  `;
+  document.head.appendChild(style);
+};
+
 const shouldHideEditorButton = (item) => {
   if (!item || typeof item.status !== 'number') {
     return false;
@@ -372,13 +390,9 @@ const updateRevertButtonVisibility = (itemElement, item) => {
     return;
   }
 
-  const revertButton = itemElement.querySelector('.filepond--action-revert-item-processing');
-  if (!revertButton) {
-    return;
-  }
-
+  ensureLocalStyle();
   const shouldHide = item?.origin === FileOrigin.LOCAL;
-  revertButton.style.display = shouldHide ? 'none' : '';
+  itemElement.classList.toggle(LOCAL_ITEM_CLASS, shouldHide);
 };
 
 const updateEditorButtonState = (itemElement, item) => {
