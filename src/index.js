@@ -321,7 +321,28 @@ const updateItemFile = (item, file, metadata) => {
   } else if (typeof item?.setFile === 'undefined' && item?.file) {
     item.file = file;
   }
+};
 
+const pendingItemLoadIds = new Set();
+
+const scheduleItemLoadOnProcessingComplete = (item) => {
+  if (!item?.id) {
+    return;
+  }
+
+  pendingItemLoadIds.add(item.id);
+};
+
+const runScheduledItemLoad = (item) => {
+  if (!item?.id || !pendingItemLoadIds.has(item.id)) {
+    return;
+  }
+
+  pendingItemLoadIds.delete(item.id);
+
+  if (typeof item.load === 'function') {
+    item.load();
+  }
 };
 
 const FileStatus = {
@@ -516,6 +537,7 @@ const openEditorModal = async ({ item, labels, classes }) => {
         }
         const editedFile = new File([blob], file.name, { type: blob.type });
         updateItemFile(item, editedFile, { rotation, flipX, flipY });
+        scheduleItemLoadOnProcessingComplete(item);
         closeModal();
       }, file.type || 'image/png');
     });
@@ -608,8 +630,8 @@ const plugin = (fpAPI) => {
     const updateItemButton = ({ root, id }) => {
       const item = query('GET_ITEM', id);
       if (!item) return;
-      if (item.status === FileStatus.PROCESSING_COMPLETE && typeof item.load === 'function') {
-        item.load();
+      if (item.status === FileStatus.PROCESSING_COMPLETE) {
+        runScheduledItemLoad(item);
       }
       updateEditorButtonState(root.element, item);
     };
