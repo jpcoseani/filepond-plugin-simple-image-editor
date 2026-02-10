@@ -322,9 +322,6 @@ const updateItemFile = (item, file, metadata) => {
     item.file = file;
   }
 
-  if (typeof item?.load === 'function') {
-    item.load();
-  }
 };
 
 const FileStatus = {
@@ -611,6 +608,9 @@ const plugin = (fpAPI) => {
     const updateItemButton = ({ root, id }) => {
       const item = query('GET_ITEM', id);
       if (!item) return;
+      if (item.status === FileStatus.PROCESSING_COMPLETE && typeof item.load === 'function') {
+        item.load();
+      }
       updateEditorButtonState(root.element, item);
     };
 
