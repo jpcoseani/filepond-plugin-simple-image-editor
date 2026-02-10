@@ -321,68 +321,10 @@ const updateItemFile = (item, file, metadata) => {
   } else if (typeof item?.setFile === 'undefined' && item?.file) {
     item.file = file;
   }
-};
 
-const pendingItemLoadIds = new Set();
-
-const scheduleItemLoadOnProcessingComplete = (item) => {
-  if (!item?.id) {
-    return;
+  if (typeof item?.fire === 'function') {
+    item.fire('load');
   }
-
-  pendingItemLoadIds.add(item.id);
-};
-
-const runScheduledItemLoad = (item) => {
-  if (!item?.id || !pendingItemLoadIds.has(item.id)) {
-    return;
-  }
-
-  pendingItemLoadIds.delete(item.id);
-
-  if (typeof item.load === 'function') {
-    item.load();
-  }
-};
-
-const FileStatus = {
-  INIT: 1,
-  IDLE: 2,
-  PROCESSING: 3,
-  PROCESSING_COMPLETE: 5,
-  PROCESSING_ERROR: 6,
-  PROCESSING_QUEUED: 9,
-  PROCESSING_REVERT_ERROR: 10,
-  LOADING: 7,
-  LOAD_ERROR: 8,
-};
-
-const shouldHideEditorButton = (item) => {
-  if (!item || typeof item.status !== 'number') {
-    return false;
-  }
-
-  return [
-    FileStatus.PROCESSING,
-    FileStatus.PROCESSING_QUEUED,
-    FileStatus.LOADING,
-  ].includes(item.status);
-};
-
-const updateEditorButtonState = (itemElement, item) => {
-  if (!itemElement) {
-    return;
-  }
-
-  const button = itemElement.querySelector('[data-simple-image-editor]');
-  if (!button) {
-    return;
-  }
-
-  const isProcessingComplete = item?.status === FileStatus.PROCESSING_COMPLETE;
-  button.style.display = shouldHideEditorButton(item) ? 'none' : 'flex';
-  button.style.top = isProcessingComplete ? 'auto' : '8px';
-  button.style.bottom = isProcessingComplete ? '8px' : 'auto';
 };
 
 const drawImageToCanvas = ({ img, canvas, rotation, flipX, flipY }) => {
@@ -537,7 +479,6 @@ const openEditorModal = async ({ item, labels, classes }) => {
         }
         const editedFile = new File([blob], file.name, { type: blob.type });
         updateItemFile(item, editedFile, { rotation, flipX, flipY });
-        scheduleItemLoadOnProcessingComplete(item);
         closeModal();
       }, file.type || 'image/png');
     });
@@ -592,7 +533,6 @@ const addEditorButton = (item, itemElement, labels, classes) => {
 
   itemElement.style.position = 'relative';
   itemElement.appendChild(button);
-  updateEditorButtonState(itemElement, item);
 };
 
 const plugin = (fpAPI) => {
@@ -624,30 +564,11 @@ const plugin = (fpAPI) => {
 
       // ✅ acá tenés el elemento del item real
       addEditorButton(item, root.element, labels, classes);
-      updateEditorButtonState(root.element, item);
-    };
-
-    const updateItemButton = ({ root, id }) => {
-      const item = query('GET_ITEM', id);
-      if (!item) return;
-      if (item.status === FileStatus.PROCESSING_COMPLETE) {
-        runScheduledItemLoad(item);
-      }
-      updateEditorButtonState(root.element, item);
     };
 
     view.registerWriter(
       createRoute(
-        {
-          DID_LOAD_ITEM: didLoadItem,
-          DID_START_ITEM_PROCESSING: updateItemButton,
-          DID_REQUEST_ITEM_PROCESSING: updateItemButton,
-          DID_COMPLETE_ITEM_PROCESSING: updateItemButton,
-          DID_ABORT_ITEM_PROCESSING: updateItemButton,
-          DID_REVERT_ITEM_PROCESSING: updateItemButton,
-          DID_THROW_ITEM_PROCESSING_ERROR: updateItemButton,
-          DID_THROW_ITEM_PROCESSING_REVERT_ERROR: updateItemButton,
-        },
+        { DID_LOAD_ITEM: didLoadItem },
         () => {
           // writer noop (opcional)
         }
