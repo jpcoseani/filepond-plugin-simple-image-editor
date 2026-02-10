@@ -322,7 +322,9 @@ const updateItemFile = (item, file, metadata) => {
     item.file = file;
   }
 
-  if (typeof item?.fire === 'function') {
+  if (typeof item?.load === 'function') {
+    item.load();
+  } else if (typeof item?.fire === 'function') {
     item.fire('load');
   }
 };
@@ -345,24 +347,6 @@ const FileOrigin = {
   LOCAL: 3,
 };
 
-const LOCAL_ITEM_CLASS = 'simple-image-editor--local';
-const LOCAL_STYLE_ID = 'simple-image-editor-local-style';
-
-const ensureLocalStyle = () => {
-  if (document.getElementById(LOCAL_STYLE_ID)) {
-    return;
-  }
-
-  const style = document.createElement('style');
-  style.id = LOCAL_STYLE_ID;
-  style.textContent = `
-    .${LOCAL_ITEM_CLASS} .filepond--action-revert-item-processing {
-      display: none;
-    }
-  `;
-  document.head.appendChild(style);
-};
-
 const shouldHideEditorButton = (item) => {
   if (!item || typeof item.status !== 'number') {
     return false;
@@ -383,16 +367,6 @@ const markItemAsLocal = (item) => {
   if (item.origin !== FileOrigin.LOCAL) {
     item.origin = FileOrigin.LOCAL;
   }
-};
-
-const updateRevertButtonVisibility = (itemElement, item) => {
-  if (!itemElement) {
-    return;
-  }
-
-  ensureLocalStyle();
-  const shouldHide = item?.origin === FileOrigin.LOCAL;
-  itemElement.classList.toggle(LOCAL_ITEM_CLASS, shouldHide);
 };
 
 const updateEditorButtonState = (itemElement, item) => {
@@ -650,7 +624,6 @@ const plugin = (fpAPI) => {
       // ✅ acá tenés el elemento del item real
       addEditorButton(item, root.element, labels, classes);
       updateEditorButtonState(root.element, item);
-      updateRevertButtonVisibility(root.element, item);
     };
 
     const updateItemButton = ({ root, id }) => {
@@ -659,7 +632,6 @@ const plugin = (fpAPI) => {
       if (item.status === FileStatus.PROCESSING_COMPLETE) {
         markItemAsLocal(item);
       }
-      updateRevertButtonVisibility(root.element, item);
       updateEditorButtonState(root.element, item);
     };
 
