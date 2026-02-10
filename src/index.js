@@ -324,8 +324,6 @@ const updateItemFile = (item, file, metadata) => {
 
   if (typeof item?.load === 'function') {
     item.load();
-  } else if (typeof item?.fire === 'function') {
-    item.fire('load');
   }
 };
 
@@ -341,12 +339,6 @@ const FileStatus = {
   LOAD_ERROR: 8,
 };
 
-const FileOrigin = {
-  INPUT: 1,
-  LIMBO: 2,
-  LOCAL: 3,
-};
-
 const shouldHideEditorButton = (item) => {
   if (!item || typeof item.status !== 'number') {
     return false;
@@ -357,16 +349,6 @@ const shouldHideEditorButton = (item) => {
     FileStatus.PROCESSING_QUEUED,
     FileStatus.LOADING,
   ].includes(item.status);
-};
-
-const markItemAsLocal = (item) => {
-  if (!item || typeof item.origin === 'undefined') {
-    return;
-  }
-
-  if (item.origin !== FileOrigin.LOCAL) {
-    item.origin = FileOrigin.LOCAL;
-  }
 };
 
 const updateEditorButtonState = (itemElement, item) => {
@@ -629,9 +611,6 @@ const plugin = (fpAPI) => {
     const updateItemButton = ({ root, id }) => {
       const item = query('GET_ITEM', id);
       if (!item) return;
-      if (item.status === FileStatus.PROCESSING_COMPLETE) {
-        markItemAsLocal(item);
-      }
       updateEditorButtonState(root.element, item);
     };
 
