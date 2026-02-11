@@ -318,11 +318,6 @@ const updateItemFile = (item, file, metadata) => {
 
   if (typeof item?.setFile === 'function') {
     item.setFile(file);
-  } else if (typeof item?.setFile === 'undefined' && item?.file) {
-    item.file = file;
-  }
-
-  if (typeof item?.fire === 'function') {
     item.fire('load');
   }
 };
@@ -503,7 +498,7 @@ const addEditorButton = (item, itemElement, labels, classes) => {
   applyClassNames(button, classes.classButton);
   Object.assign(button.style, {
     position: 'absolute',
-    top: '8px',
+    bottom: '8px',
     right: '8px',
     zIndex: '10',
     width: '32px',

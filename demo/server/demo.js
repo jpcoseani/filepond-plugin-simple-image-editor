@@ -78,7 +78,7 @@ const preloadSamples = async (pondInstance) => {
     }),
   ]);
 
-  samples.forEach((file) => pondInstance.addFile(file));
+  samples.forEach((file) => pondInstance.addFile(file, { type: 'local' }));
 };
 
 preloadSamples(pond);
