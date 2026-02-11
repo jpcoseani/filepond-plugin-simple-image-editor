@@ -1,12 +1,17 @@
 import * as FilePond from 'https://unpkg.com/filepond/dist/filepond.esm.js';
 import FilePondImagePreview from 'https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js';
-import SimpleImageEditorPlugin from '../src/index.js';
+import SimpleImageEditorPlugin from '../../src/index.js';
 
 FilePond.registerPlugin(FilePondImagePreview, SimpleImageEditorPlugin);
 
 const baseOptions = {
   allowMultiple: true,
   credits: false,
+  server: {
+    process: 'http://localhost:3000/process',
+    revert: 'http://localhost:3000/revert',
+    load: 'http://localhost:3000/load/',
+  },
 };
 
 const pond = FilePond.create(document.querySelector('#demo-upload'), {
@@ -73,7 +78,7 @@ const preloadSamples = async (pondInstance) => {
     }),
   ]);
 
-  //samples.forEach((file) => pondInstance.addFile(file));
+  samples.forEach((file) => pondInstance.addFile(file, { type: 'local' }));
 };
 
 preloadSamples(pond);

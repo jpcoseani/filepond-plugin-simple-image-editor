@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FilePond Simple Image Editor Server Demo</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/filepond/dist/filepond.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+    />
+    <style>
+      :root {
+        font-family: 'Inter', system-ui, sans-serif;
+        color: #0f172a;
+        background: #f8fafc;
+      }
+
+      body {
+        margin: 0;
+        padding: 32px;
+      }
+
+      .demo-shell {
+        max-width: 960px;
+        margin: 0 auto;
+        display: grid;
+        gap: 24px;
+      }
+
+      .demo-header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .demo-header h1 {
+        margin: 0;
+        font-size: 28px;
+      }
+
+      .demo-header p {
+        margin: 0;
+        color: #475569;
+      }
+
+      .demo-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+      }
+
+      .demo-card h2 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      .demo-notes {
+        display: grid;
+        gap: 8px;
+        color: #475569;
+        font-size: 14px;
+      }
+
+      .demo-notes code {
+        background: #e2e8f0;
+        border-radius: 6px;
+        padding: 2px 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-shell">
+      <header class="demo-header">
+        <h1>Simple Image Editor Server Demo</h1>
+        <p>
+          This page uses a local server so you can inspect FilePond's
+          <code>process</code>, <code>revert</code>, and <code>load</code> calls.
+        </p>
+      </header>
+
+      <section class="demo-card">
+        <h2>Without image preview</h2>
+        <input id="demo-upload" type="file" multiple accept="image/*" />
+      </section>
+
+      <section class="demo-card">
+        <h2>With image preview</h2>
+        <input id="demo-upload-preview" type="file" multiple accept="image/*" />
+      </section>
+
+      <section class="demo-notes">
+        <div>✅ Without and with the image preview plugin.</div>
+        <div>✅ Click the pencil to open the modal editor and rotate/flip.</div>
+        <div>
+          ✅ Inspect network requests to trace the upload lifecycle.
+        </div>
+        <div>
+          ✅ Looking for the static demo? Open the
+          <a href="/demo/">original demo</a>.
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="./demo.js"></script>
+  </body>
+</html>

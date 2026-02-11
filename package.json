@@ -27,7 +27,8 @@
   "scripts": {
     "dev": "http-server .",
     "build": "echo \"No build step configured\"",
-    "test": "jest"
+    "test": "jest",
+    "demo:server": "node demo/server/server.js"
   },
   "dependencies": {
     "filepond": "^4.32.7"
